@@ -4,8 +4,8 @@ Flips PDF pages by tracking head movement using the device's camera.
 
 ## Todo
 
-- [ ] Pick file (.pdf)
-- [ ] View PDF
+- [x] Pick file (.pdf)
+- [x] View PDF
 - [ ] MLKit
   - [ ] Face detection
   - [ ] Head tracking

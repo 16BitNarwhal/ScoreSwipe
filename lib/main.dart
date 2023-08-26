@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -64,17 +65,19 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Pick a file below:',
-            ),
-            ElevatedButton(
-                onPressed: _pickFile, child: const Text('Pick File')),
-            Text(_fileText),
-          ],
-        ),
+        child: _fileText == "" // TODO: make into separate widgets?
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text(
+                    'Pick a file below:',
+                  ),
+                  ElevatedButton(
+                      onPressed: _pickFile, child: const Text('Pick File')),
+                  Text(_fileText),
+                ],
+              )
+            : SfPdfViewer.file(File(_fileText)),
       ),
     );
   }
