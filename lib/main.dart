@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
+import 'camera.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(title: 'File Picker'),
+      home: const MainScreen(),
     );
   }
 }
