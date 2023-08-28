@@ -14,4 +14,3 @@ Flips PDF pages by tracking head movement using the device's camera.
   - [ ] Flip sensitivity
   - [ ] Flip direction/rotation
 - [ ] UI
-- [ ] Track and reduce resources used

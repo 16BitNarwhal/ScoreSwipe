@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   String _fileText = "";
   bool turningPage = false;
 
-  String debug = "";
+  String debugMsg = "";
 
   final faceDetector = FaceDetector(options: FaceDetectorOptions());
 
@@ -65,21 +65,17 @@ class _MainScreenState extends State<MainScreen> {
           if (!turningPage) {
             _pdfController.nextPage();
             turningPage = true;
+            setState(() {});
           }
         } else if (rotZ < -15) {
           if (!turningPage) {
             _pdfController.previousPage();
             turningPage = true;
+            setState(() {});
           }
         } else if (rotZ.abs() < 10 && turningPage) {
           turningPage = false; // or use a timer/delay?
         }
-        setState(() {
-          // debug = rotZ.toString();
-          debug = (face.boundingBox.width * face.boundingBox.height)
-              .round()
-              .toString();
-        });
       });
 
       setState(() {}); //To refresh widget
@@ -181,7 +177,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('PDF Player Dev $debug'),
+        title: Text('PDF Player Dev $debugMsg'),
       ),
       body: Center(
         child: _fileText == "" // TODO: make into separate widgets?
