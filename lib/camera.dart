@@ -22,10 +22,9 @@ class _MainScreenState extends State<MainScreen> {
   String _fileText = "";
   bool turningPage = false;
 
-  double rotZ = 0;
+  String debug = "";
 
-  final faceDetector =
-      FaceDetector(options: FaceDetectorOptions(enableClassification: true));
+  final faceDetector = FaceDetector(options: FaceDetectorOptions());
 
   void startCamera() async {
     cameras = await availableCameras();
@@ -49,26 +48,38 @@ class _MainScreenState extends State<MainScreen> {
         if (inputImage == null) return;
 
         final List<Face> faces = await faceDetector.processImage(inputImage);
+        if (faces.isEmpty) return;
 
-        for (Face face in faces) {
-          if (face.headEulerAngleZ == null) return;
-          rotZ = face.headEulerAngleZ!; // Head is tilted sideways rotZ degrees
+        // set face to face with largest bounding box area
+        Face face = faces.reduce((curr, next) =>
+            curr.boundingBox.width * curr.boundingBox.height >
+                    next.boundingBox.width * next.boundingBox.height
+                ? curr
+                : next);
 
-          if (rotZ > 15) {
-            if (!turningPage) {
-              _pdfController.nextPage();
-              turningPage = true;
-            }
-          } else if (rotZ < -15) {
-            if (!turningPage) {
-              _pdfController.previousPage();
-              turningPage = true;
-            }
-          } else if (rotZ.abs() < 10 && turningPage) {
-            turningPage = false; // or use a timer/delay?
+        if (face.headEulerAngleZ == null) return;
+        final double rotZ =
+            face.headEulerAngleZ!; // Head is tilted sideways rotZ degrees
+
+        if (rotZ > 15) {
+          if (!turningPage) {
+            _pdfController.nextPage();
+            turningPage = true;
           }
+        } else if (rotZ < -15) {
+          if (!turningPage) {
+            _pdfController.previousPage();
+            turningPage = true;
+          }
+        } else if (rotZ.abs() < 10 && turningPage) {
+          turningPage = false; // or use a timer/delay?
         }
-        setState(() {});
+        setState(() {
+          // debug = rotZ.toString();
+          debug = (face.boundingBox.width * face.boundingBox.height)
+              .round()
+              .toString();
+        });
       });
 
       setState(() {}); //To refresh widget
@@ -170,7 +181,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('PDF Player Dev $rotZ'),
+        title: Text('PDF Player Dev $debug'),
       ),
       body: Center(
         child: _fileText == "" // TODO: make into separate widgets?
