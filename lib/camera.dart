@@ -22,8 +22,6 @@ class _MainScreenState extends State<MainScreen> {
   String _fileText = "";
   bool turningPage = false;
 
-  String debugMsg = "";
-
   final faceDetector = FaceDetector(options: FaceDetectorOptions());
 
   void startCamera() async {
@@ -174,25 +172,42 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('PDF Player Dev $debugMsg'),
-      ),
-      body: Center(
-        child: _fileText == "" // TODO: make into separate widgets?
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'Pick a file below:',
-                  ),
-                  ElevatedButton(
-                      onPressed: _pickFile, child: const Text('Pick File')),
-                  Text(_fileText),
-                ],
-              )
-            : SfPdfViewer.file(File(_fileText), controller: _pdfController),
+    return WillPopScope(
+      onWillPop: () async {
+        if (_fileText == "") return true;
+        _fileText = "";
+        _cameraController.stopImageStream();
+        _cameraController.dispose();
+        _pdfController.dispose();
+        setState(() {});
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text('PDF Player'),
+          actions: [
+            _fileText != ""
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    tooltip: 'Return to Home',
+                    onPressed: () {
+                      _fileText = "";
+                      _cameraController.stopImageStream();
+                      _cameraController.dispose();
+                      _pdfController.dispose();
+                      setState(() {});
+                    },
+                  )
+                : Container(),
+          ],
+        ),
+        body: Center(
+          child: _fileText == "" // TODO: proper page navigation
+              ? ElevatedButton(
+                  onPressed: _pickFile, child: const Text('Pick File'))
+              : SfPdfViewer.file(File(_fileText), controller: _pdfController),
+        ),
       ),
     );
   }
