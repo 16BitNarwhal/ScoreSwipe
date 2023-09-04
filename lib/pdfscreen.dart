@@ -2,31 +2,35 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+class PdfScreen extends StatefulWidget {
+  const PdfScreen({Key? key}) : super(key: key);
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<PdfScreen> createState() => _PdfScreen();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> cameras;
   late CameraController _cameraController;
   late PdfViewerController _pdfController;
+  late String fileText;
 
-  String _fileText = "";
   bool turningPage = false;
 
   final faceDetector = FaceDetector(options: FaceDetectorOptions());
 
+  @override
+  void initState() {
+    super.initState();
+    startCamera();
+  }
+
   void startCamera() async {
     cameras = await availableCameras();
-
+    _pdfController = PdfViewerController();
     _cameraController = CameraController(
       cameras[1],
       ResolutionPreset.low,
@@ -80,28 +84,6 @@ class _MainScreenState extends State<MainScreen> {
     }).catchError((e) {
       // print(e);
     });
-  }
-
-  void _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-        allowMultiple: false);
-
-    if (result != null && result.files.single.path != null) {
-      // PlatformFile file = result.files.first;
-
-      File _file = File(result.files.single.path!);
-
-      startCamera();
-      _pdfController = PdfViewerController();
-
-      setState(() {
-        _fileText = _file.path;
-      });
-    } else {
-      // User canceled the picker
-    }
   }
 
   final _orientations = {
@@ -167,48 +149,21 @@ class _MainScreenState extends State<MainScreen> {
   void dispose() {
     _cameraController.stopImageStream();
     _cameraController.dispose();
+    _pdfController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (_fileText == "") return true;
-        _fileText = "";
-        _cameraController.stopImageStream();
-        _cameraController.dispose();
-        _pdfController.dispose();
-        setState(() {});
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text('PDF Player'),
-          actions: [
-            _fileText != ""
-                ? IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    tooltip: 'Return to Home',
-                    onPressed: () {
-                      _fileText = "";
-                      _cameraController.stopImageStream();
-                      _cameraController.dispose();
-                      _pdfController.dispose();
-                      setState(() {});
-                    },
-                  )
-                : Container(),
-          ],
-        ),
-        body: Center(
-          child: _fileText == "" // TODO: proper page navigation
-              ? ElevatedButton(
-                  onPressed: _pickFile, child: const Text('Pick File'))
-              : SfPdfViewer.file(File(_fileText), controller: _pdfController),
-        ),
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    fileText = arguments['fileText'];
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('PDF Player'),
       ),
+      body: SfPdfViewer.file(File(fileText), controller: _pdfController),
     );
   }
 }
