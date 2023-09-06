@@ -9,18 +9,20 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  final String title = 'Score Swipe';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'PDF Player',
+        title: title,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => const MainScreen(),
-          '/pdfscreen': (context) => const PdfScreen(),
+          '/': (context) => MainScreen(title: title),
+          '/pdfscreen': (context) => PdfScreen(title: title),
         });
   }
 }

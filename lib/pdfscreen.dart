@@ -6,7 +6,9 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PdfScreen extends StatefulWidget {
-  const PdfScreen({Key? key}) : super(key: key);
+  const PdfScreen({Key? key, this.title = ""}) : super(key: key);
+
+  final String title;
 
   @override
   State<PdfScreen> createState() => _PdfScreen();

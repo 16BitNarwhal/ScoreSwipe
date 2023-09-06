@@ -5,7 +5,9 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:file_picker/file_picker.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({Key? key, this.title = ""}) : super(key: key);
+
+  final String title;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -45,7 +47,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('PDF Player'),
+        title: Text(widget.title),
       ),
       body: Center(
           child: ElevatedButton(
