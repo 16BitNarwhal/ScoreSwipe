@@ -164,6 +164,14 @@ class _PdfScreen extends State<PdfScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('PDF Player'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/configscreen');
+            },
+          ),
+        ],
       ),
       body: SfPdfViewer.file(File(fileText), controller: _pdfController),
     );
