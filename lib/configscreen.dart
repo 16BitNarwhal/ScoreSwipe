@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfigScreen extends StatefulWidget {
   const ConfigScreen({Key? key, this.title = ""}) : super(key: key);
@@ -10,10 +10,30 @@ class ConfigScreen extends StatefulWidget {
   State<ConfigScreen> createState() => _ConfigScreenState();
 }
 
+class Config {
+  static late final SharedPreferences prefs;
+
+  static bool invertDirection = false;
+  static bool enableTiltTrack = true;
+  static double sensitivity = 50;
+
+  static void loadPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    invertDirection = prefs.getBool('invertDirection') ?? false;
+    enableTiltTrack = prefs.getBool('enableTiltTrack') ?? true;
+    sensitivity = prefs.getDouble('sensitivity') ?? 50;
+  }
+}
+
 class _ConfigScreenState extends State<ConfigScreen> {
-  bool invertDirection = false;
-  bool enableTiltTrack = true;
-  double sensitivity = 0.5;
+  late final SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    Config.loadPrefs();
+    setState(() {});
+  }
 
   configOption(title, widget) {
     return Row(
@@ -40,39 +60,39 @@ class _ConfigScreenState extends State<ConfigScreen> {
             configOption(
               'Tilt Tracking',
               Switch(
-                value: enableTiltTrack,
+                value: Config.enableTiltTrack,
                 onChanged: (bool value) {
                   setState(() {
-                    enableTiltTrack = value;
+                    Config.enableTiltTrack = value;
                   });
                 },
               ),
             ),
-            (enableTiltTrack
+            (Config.enableTiltTrack
                 ? configOption(
                     'Invert Direction',
                     Switch(
-                      value: invertDirection,
+                      value: Config.invertDirection,
                       onChanged: (bool value) {
                         setState(() {
-                          invertDirection = value;
+                          Config.invertDirection = value;
                         });
                       },
                     ),
                   )
                 : Container()),
-            (enableTiltTrack
+            (Config.enableTiltTrack
                 ? configOption(
                     'Sensitivity',
                     Slider(
-                      value: sensitivity,
+                      value: Config.sensitivity,
                       min: 0,
-                      max: 1,
+                      max: 100,
                       divisions: 10,
-                      label: sensitivity.toStringAsFixed(1),
+                      label: Config.sensitivity.toStringAsFixed(1),
                       onChanged: (double value) {
                         setState(() {
-                          sensitivity = value;
+                          Config.sensitivity = value;
                         });
                       },
                     ),
