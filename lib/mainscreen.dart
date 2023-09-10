@@ -48,6 +48,14 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/configscreen');
+            },
+          ),
+        ],
       ),
       body: Center(
           child: ElevatedButton(

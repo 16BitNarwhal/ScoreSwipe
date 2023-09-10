@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'configscreen.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({Key? key, this.title = ""}) : super(key: key);
@@ -20,6 +21,8 @@ class _PdfScreen extends State<PdfScreen> {
   late PdfViewerController _pdfController;
   late String fileText;
 
+  String debug = "";
+
   bool turningPage = false;
 
   final faceDetector = FaceDetector(options: FaceDetectorOptions());
@@ -28,6 +31,8 @@ class _PdfScreen extends State<PdfScreen> {
   void initState() {
     super.initState();
     startCamera();
+    Config.loadPrefs();
+    debug = Config.sensitivity.toString();
   }
 
   void startCamera() async {
@@ -48,6 +53,8 @@ class _PdfScreen extends State<PdfScreen> {
       }
 
       _cameraController.startImageStream((CameraImage availableImage) async {
+        if (!Config.enableTiltTrack) return;
+
         InputImage? inputImage = inputImageFromCameraImage(availableImage);
         if (inputImage == null) return;
 
@@ -65,19 +72,25 @@ class _PdfScreen extends State<PdfScreen> {
         final double rotZ =
             face.headEulerAngleZ!; // Head is tilted sideways rotZ degrees
 
-        if (rotZ > 15) {
+        final double threshold = (100 - Config.sensitivity) / 100 * 40;
+
+        if (rotZ > threshold) {
           if (!turningPage) {
-            _pdfController.nextPage();
+            (Config.invertDirection)
+                ? _pdfController.previousPage()
+                : _pdfController.nextPage();
             turningPage = true;
             setState(() {});
           }
-        } else if (rotZ < -15) {
+        } else if (rotZ < -threshold) {
           if (!turningPage) {
-            _pdfController.previousPage();
+            (Config.invertDirection)
+                ? _pdfController.nextPage()
+                : _pdfController.previousPage();
             turningPage = true;
             setState(() {});
           }
-        } else if (rotZ.abs() < 10 && turningPage) {
+        } else if (rotZ.abs() < threshold * 0.6 && turningPage) {
           turningPage = false; // or use a timer/delay?
         }
       });
@@ -155,6 +168,14 @@ class _PdfScreen extends State<PdfScreen> {
     super.dispose();
   }
 
+  void pushConfigScreen(BuildContext context) async {
+    await Navigator.pushNamed(context, '/configscreen');
+    Config.loadPrefs();
+    setState(() {
+      debug = Config.sensitivity.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
@@ -163,7 +184,15 @@ class _PdfScreen extends State<PdfScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('PDF Player'),
+        title: Text('PDF Player $debug'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              pushConfigScreen(context);
+            },
+          ),
+        ],
       ),
       body: SfPdfViewer.file(File(fileText), controller: _pdfController),
     );

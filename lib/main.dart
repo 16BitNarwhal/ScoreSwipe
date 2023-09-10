@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pdfscreen.dart';
 import 'mainscreen.dart';
+import 'configscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => MainScreen(title: title),
           '/pdfscreen': (context) => PdfScreen(title: title),
+          '/configscreen': (context) => ConfigScreen(title: 'Settings'),
         });
   }
 }
