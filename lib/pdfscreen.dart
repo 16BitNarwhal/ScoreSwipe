@@ -32,7 +32,6 @@ class _PdfScreen extends State<PdfScreen> {
     super.initState();
     startCamera();
     Config.loadPrefs();
-    debug = Config.sensitivity.toString();
   }
 
   void startCamera() async {
@@ -73,6 +72,8 @@ class _PdfScreen extends State<PdfScreen> {
             face.headEulerAngleZ!; // Head is tilted sideways rotZ degrees
 
         final double threshold = (100 - Config.sensitivity) / 100 * 40;
+
+        debug = threshold.toString();
 
         if (rotZ > threshold) {
           if (!turningPage) {
