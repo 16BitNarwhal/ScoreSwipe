@@ -39,38 +39,50 @@ class TitleScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/mainscreen');
-          },
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7),
+        Container(
+          margin: const EdgeInsets.only(bottom: 12.0, left: 16.0, right: 16.0),
+          height: 48,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/mainscreen');
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7),
+              ),
             ),
-          ),
-          child: Text(
-            'Sign In',
-            style: TextStyle(
-                fontSize: 19,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onPrimary),
+            child: Text(
+              'Sign In',
+              style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onPrimary),
+            ),
           ),
         ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7),
+        Container(
+          margin: const EdgeInsets.only(bottom: 12.0, left: 16.0, right: 16.0),
+          height: 48,
+          child: ElevatedButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.background,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7),
+              ),
+              side: BorderSide(
+                  width: 1.0,
+                  color: Theme.of(context).colorScheme.onBackground),
             ),
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, '/mainscreen');
-          },
-          child: Text(
-            'Sign Up',
-            style: TextStyle(
-                fontSize: 19,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onPrimary),
+            onPressed: () {
+              Navigator.pushNamed(context, '/mainscreen');
+            },
+            child: Text(
+              'Sign Up',
+              style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onBackground),
+            ),
           ),
         ),
         TextButton(
