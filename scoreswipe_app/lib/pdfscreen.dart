@@ -19,7 +19,7 @@ class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> cameras;
   late CameraController _cameraController;
   late PdfViewerController _pdfController;
-  late String fileText;
+  late String filePath;
 
   String debug = "";
 
@@ -30,13 +30,13 @@ class _PdfScreen extends State<PdfScreen> {
   @override
   void initState() {
     super.initState();
+    _pdfController = PdfViewerController();
     startCamera();
     Config.loadPrefs();
   }
 
   void startCamera() async {
     cameras = await availableCameras();
-    _pdfController = PdfViewerController();
     _cameraController = CameraController(
       cameras[1],
       ResolutionPreset.low,
@@ -180,22 +180,25 @@ class _PdfScreen extends State<PdfScreen> {
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    fileText = arguments['fileText'];
+    filePath = arguments['filePath'];
+
+    print(File(filePath));
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('PDF Player $debug'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              pushConfigScreen(context);
-            },
-          ),
-        ],
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      // actions: [
+      //   IconButton(
+      //     icon: const Icon(Icons.settings),
+      //     onPressed: () {
+      //       pushConfigScreen(context);
+      //     },
+      //   ),
+      // ],
+      // ),
+      body: SafeArea(
+        child: SfPdfViewer.file(File(filePath), controller: _pdfController),
       ),
-      body: SfPdfViewer.file(File(fileText), controller: _pdfController),
     );
   }
 }

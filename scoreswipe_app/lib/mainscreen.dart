@@ -126,6 +126,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'filemanager.dart';
 
 class MainScreen extends StatefulWidget {
   final String title;
@@ -179,8 +180,7 @@ class AppBarView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            // stretch to full height
-            // margin: EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+            margin: EdgeInsets.symmetric(horizontal: 32, vertical: 48),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -305,36 +305,48 @@ class MusicSheetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      foregroundDecoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
+    return GestureDetector(
+      onTap: () async {
+        // Handle card tap
+        String? filePath = await FileManager.systemFilePicker();
+
+        if (filePath != null && context.mounted) {
+          Navigator.pushNamed(context, '/pdfscreen',
+              arguments: {'filePath': filePath});
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          width: 2,
+          borderRadius: BorderRadius.circular(10),
         ),
-      ),
-      height: 140,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // image with top borders
-          Image.asset(
-            'assets/images/placeholder.png',
-            fit: BoxFit.cover,
-            height: 100,
+        foregroundDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.surface,
+            width: 2,
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              'Item $i',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        ),
+        height: 140,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // image with top borders
+            Image.asset(
+              'assets/images/placeholder.png',
+              fit: BoxFit.cover,
+              height: 100,
             ),
-          ),
-        ],
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                'Item $i',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
