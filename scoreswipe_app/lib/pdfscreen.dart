@@ -19,7 +19,6 @@ class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> cameras;
   late CameraController _cameraController;
   late PdfViewerController _pdfController;
-  late String filePath;
 
   String debug = "";
 
@@ -180,9 +179,7 @@ class _PdfScreen extends State<PdfScreen> {
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    filePath = arguments['filePath'];
-
-    print(File(filePath));
+    File file = arguments['file'];
 
     return Scaffold(
       // appBar: AppBar(
@@ -197,7 +194,7 @@ class _PdfScreen extends State<PdfScreen> {
       // ],
       // ),
       body: SafeArea(
-        child: SfPdfViewer.file(File(filePath), controller: _pdfController),
+        child: SfPdfViewer.file(file, controller: _pdfController),
       ),
     );
   }

@@ -127,6 +127,7 @@
 
 import 'package:flutter/material.dart';
 import 'filemanager.dart';
+import 'dart:io';
 
 class MainScreen extends StatefulWidget {
   final String title;
@@ -143,7 +144,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // Add a delay to simulate a loading delay.
+
     Future.delayed(Duration(seconds: 1), () {
       setState(() {
         tabHeight = MediaQuery.of(context).size.height * 0.75;
@@ -159,7 +160,17 @@ class _MainScreenState extends State<MainScreen> {
         child: Stack(
           children: [
             AppBarView(),
-            MusicSheetsView(tabHeight: tabHeight),
+            FutureBuilder(
+                future: FileManager.listAllPdfFiles(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  return MusicSheetsView(
+                      tabHeight: tabHeight, scoreFiles: snapshot.data ?? []);
+                }),
           ],
         ),
       ),
@@ -230,9 +241,11 @@ class MusicSheetsView extends StatelessWidget {
   const MusicSheetsView({
     super.key,
     required this.tabHeight,
+    required this.scoreFiles,
   });
 
   final double tabHeight;
+  final List<File> scoreFiles;
 
   @override
   Widget build(BuildContext context) {
@@ -280,13 +293,15 @@ class MusicSheetsView extends StatelessWidget {
                   ),
                 ],
               ),
-              // Add your scrollable content here
-              // Example:
-              for (int i = 0; i < 20; i++)
+              for (File scoreFile in scoreFiles)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: MusicSheetCard(i: i),
+                  child: MusicSheetCard(scoreFile: scoreFile),
                 ),
+              // expand to leftover screen size in vertical scrolling
+              SizedBox(
+                  height:
+                      tabHeight - 64 - 32 - scoreFiles.length * (200 + 8 * 2)),
             ],
           ),
         ),
@@ -298,21 +313,20 @@ class MusicSheetsView extends StatelessWidget {
 class MusicSheetCard extends StatelessWidget {
   const MusicSheetCard({
     super.key,
-    required this.i,
+    // required this.i,
+    required this.scoreFile,
   });
 
-  final int i;
+  final File scoreFile;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        // Handle card tap
-        String? filePath = await FileManager.systemFilePicker();
-
-        if (filePath != null && context.mounted) {
+        FileManager.systemFilePickAndCopy();
+        if (context.mounted) {
           Navigator.pushNamed(context, '/pdfscreen',
-              arguments: {'filePath': filePath});
+              arguments: {'file': scoreFile});
         }
       },
       child: Container(
@@ -327,7 +341,7 @@ class MusicSheetCard extends StatelessWidget {
             width: 2,
           ),
         ),
-        height: 140,
+        height: 200,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -335,12 +349,12 @@ class MusicSheetCard extends StatelessWidget {
             Image.asset(
               'assets/images/placeholder.png',
               fit: BoxFit.cover,
-              height: 100,
+              height: 160,
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
-                'Item $i',
+                scoreFile.path.split('/').last,
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
