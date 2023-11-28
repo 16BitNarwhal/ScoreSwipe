@@ -160,17 +160,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Stack(
           children: [
             AppBarView(),
-            FutureBuilder(
-                future: FileManager.listAllPdfFiles(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
-                  return MusicSheetsView(
-                      tabHeight: tabHeight, scoreFiles: snapshot.data ?? []);
-                }),
+            MusicSheetsView(tabHeight: tabHeight),
           ],
         ),
       ),
@@ -237,15 +227,16 @@ class AppBarView extends StatelessWidget {
   }
 }
 
-class MusicSheetsView extends StatelessWidget {
-  const MusicSheetsView({
-    super.key,
-    required this.tabHeight,
-    required this.scoreFiles,
-  });
-
+class MusicSheetsView extends StatefulWidget {
   final double tabHeight;
-  final List<File> scoreFiles;
+  const MusicSheetsView({super.key, this.tabHeight = 0});
+
+  @override
+  _MusicSheetsViewState createState() => _MusicSheetsViewState();
+}
+
+class _MusicSheetsViewState extends State<MusicSheetsView> {
+  late List<File> scoreFiles = [];
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +246,7 @@ class MusicSheetsView extends StatelessWidget {
       bottom: 0,
       left: 0,
       right: 0,
-      height: tabHeight,
+      height: widget.tabHeight,
       child: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(
@@ -263,46 +254,59 @@ class MusicSheetsView extends StatelessWidget {
             borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
           ),
           padding: EdgeInsets.all(32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
+          child: FutureBuilder(
+            future: FileManager.listAllPdfFiles(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              scoreFiles = snapshot.data as List<File>;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Music',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.onBackground,
-                        fontWeight: FontWeight.w700),
+                  Row(
+                    children: [
+                      Text(
+                        'Music',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onBackground,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Spacer(),
+                      Text(
+                        'Sort Most Recent',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).colorScheme.onBackground,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_drop_down,
+                            size: 32,
+                            color: Theme.of(context).colorScheme.onBackground),
+                        onPressed: () {
+                          // Handle sort icon tap
+                        },
+                      ),
+                    ],
                   ),
-                  Spacer(),
-                  Text(
-                    'Sort Most Recent',
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).colorScheme.onBackground,
-                        fontWeight: FontWeight.w400),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.arrow_drop_down,
-                        size: 32,
-                        color: Theme.of(context).colorScheme.onBackground),
-                    onPressed: () {
-                      // Handle sort icon tap
-                    },
-                  ),
+                  for (File scoreFile in scoreFiles)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: MusicSheetCard(scoreFile: scoreFile),
+                    ),
+                  // expand to leftover screen size in vertical scrolling
+                  SizedBox(
+                      height: widget.tabHeight -
+                          64 -
+                          32 -
+                          scoreFiles.length * (200 + 8 * 2)),
                 ],
-              ),
-              for (File scoreFile in scoreFiles)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: MusicSheetCard(scoreFile: scoreFile),
-                ),
-              // expand to leftover screen size in vertical scrolling
-              SizedBox(
-                  height:
-                      tabHeight - 64 - 32 - scoreFiles.length * (200 + 8 * 2)),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -319,11 +323,35 @@ class MusicSheetCard extends StatelessWidget {
 
   final File scoreFile;
 
+  Widget deleteDialog(BuildContext context) {
+    return AlertDialog(
+      title: Text("Delete ${scoreFile.path.split('/').last}?"),
+      content: Text(
+        "This action cannot be undone.",
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      ),
+      actions: [
+        TextButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        TextButton(
+          child: Text("Delete"),
+          onPressed: () {
+            FileManager.systemDeleteFile(scoreFile);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        FileManager.systemFilePickAndCopy();
         if (context.mounted) {
           Navigator.pushNamed(context, '/pdfscreen',
               arguments: {'file': scoreFile});
