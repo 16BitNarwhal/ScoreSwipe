@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         tabHeight = MediaQuery.of(context).size.height * 0.75;
       });
@@ -32,9 +32,9 @@ class _MainScreenState extends State<MainScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            AppBarView(),
+            const AppBarView(),
             MusicSheetsView(tabHeight: tabHeight),
-            ActionsButton(),
+            const ActionsButton(),
           ],
         ),
       ),
@@ -55,11 +55,11 @@ class AppBarView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+            margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -79,13 +79,13 @@ class AppBarView extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.search),
+                      icon: const Icon(Icons.search),
                       onPressed: () {
                         // Handle search icon tap
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.account_circle),
+                      icon: const Icon(Icons.account_circle),
                       onPressed: () {
                         // Handle account icon tap
                       },
@@ -115,7 +115,7 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
   @override
   Widget build(BuildContext context) {
     return AnimatedPositioned(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       curve: Curves.easeInOut,
       bottom: 0,
       left: 0,
@@ -125,14 +125,14 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
         child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           ),
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: FutureBuilder(
             future: FileManager.listAllPdfFiles(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               }
@@ -149,7 +149,7 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
                             color: Theme.of(context).colorScheme.onBackground,
                             fontWeight: FontWeight.w700),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Text(
                         'Sort Most Recent',
                         style: TextStyle(
@@ -172,12 +172,18 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: MusicSheetCard(scoreFile: scoreFile),
                     ),
-                  // expand to leftover screen size in vertical scrolling
-                  SizedBox(
-                      height: widget.tabHeight -
-                          64 -
-                          32 -
-                          scoreFiles.length * (200 + 8 * 2)),
+                  // TODO: super hacky solution
+                  (widget.tabHeight -
+                              64 -
+                              32 -
+                              scoreFiles.length * (200 + 8 * 2) >
+                          0)
+                      ? SizedBox(
+                          height: widget.tabHeight -
+                              64 -
+                              32 -
+                              scoreFiles.length * (200 + 8 * 2))
+                      : Container(),
                 ],
               );
             },
@@ -206,13 +212,13 @@ class MusicSheetCard extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         TextButton(
-          child: Text("Delete"),
+          child: const Text("Delete"),
           onPressed: () {
             FileManager.systemDeleteFile(scoreFile);
             Navigator.pop(context);
@@ -254,9 +260,13 @@ class MusicSheetCard extends StatelessWidget {
               height: 160,
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
-                scoreFile.path.split('/').last,
+                // remove path and extension from filename
+                scoreFile.path
+                    .split('/')
+                    .last
+                    .substring(0, scoreFile.path.split('/').last.length - 4),
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
@@ -289,7 +299,7 @@ class _ActionsButtonState extends State<ActionsButton> {
           borderRadius: BorderRadius.circular(32),
         ),
         child: IconButton(
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: () {
             showModalBottomSheet(
               context: context,
@@ -301,16 +311,16 @@ class _ActionsButtonState extends State<ActionsButton> {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: Icon(Icons.file_upload),
-                        title: Text('Upload PDF'),
+                        leading: const Icon(Icons.file_upload),
+                        title: const Text('Upload PDF'),
                         onTap: () {
                           FileManager.systemPickAndUploadFile();
                           Navigator.pop(context);
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.camera_alt),
-                        title: Text('Take Photo'),
+                        leading: const Icon(Icons.camera_alt),
+                        title: const Text('Take Photo'),
                         onTap: () {
                           // TODO: photos feature
                         },
