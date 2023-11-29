@@ -1,130 +1,3 @@
-// import 'dart:io';
-// import 'package:camera/camera.dart';
-// import 'package:flutter/material.dart';
-// import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-// import 'package:file_picker/file_picker.dart';
-
-// class MainScreen extends StatefulWidget {
-//   const MainScreen({Key? key, this.title = ""}) : super(key: key);
-
-//   final String title;
-
-//   @override
-//   State<MainScreen> createState() => _MainScreenState();
-// }
-
-// class _MainScreenState extends State<MainScreen> {
-//   late List<CameraDescription> cameras;
-
-//   String fileText = "";
-//   bool turningPage = false;
-
-//   final faceDetector = FaceDetector(options: FaceDetectorOptions());
-
-//   void _pickFile() async {
-//     FilePickerResult? result = await FilePicker.platform.pickFiles(
-//         type: FileType.custom,
-//         allowedExtensions: ['pdf'],
-//         allowMultiple: false);
-
-//     if (result != null && result.files.single.path != null) {
-//       // PlatformFile file = result.files.first;
-
-//       File file = File(result.files.single.path!);
-//       fileText = file.path;
-
-//       if (context.mounted) {
-//         Navigator.pushNamed(context, '/pdfscreen',
-//             arguments: {'fileText': fileText});
-//       }
-//     } else {
-//       // User canceled the picker
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Theme.of(context).colorScheme.secondary,
-//       // appBar: AppBar(
-//       //   toolbarHeight: 200,
-//       //   backgroundColor: Theme.of(context).colorScheme.secondary,
-//       //   actionsIconTheme: IconThemeData(
-//       //       color: Theme.of(context).colorScheme.onBackground, size: 36),
-//       // ),
-//       body: Column(
-//         children: [
-//           const MainHeader(),
-//           Container(
-//             color: Theme.of(context).colorScheme.background,
-//             height: MediaQuery.of(context).size.height - 300,
-//             child: Center(
-//               child: ElevatedButton(
-//                 onPressed: _pickFile,
-//                 child: Text(
-//                   'Pick File',
-//                   style: TextStyle(
-//                       color: Theme.of(context).colorScheme.onBackground),
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class MainHeader extends StatelessWidget {
-//   const MainHeader({
-//     super.key,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.only(top: 64, right: 32, left: 32),
-//       height: 300,
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Column(
-//             children: [
-//               Text(
-//                 'Score Swipe',
-//                 style: TextStyle(
-//                     fontSize: 24,
-//                     fontWeight: FontWeight.w600,
-//                     color: Theme.of(context).colorScheme.onBackground),
-//               ),
-//             ],
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.end,
-//             children: [
-//               IconButton(
-//                 icon: const Icon(size: 36, Icons.search_outlined),
-//                 color: Theme.of(context).colorScheme.onBackground,
-//                 onPressed: () {
-//                   Navigator.pushNamed(context, '/configscreen');
-//                 },
-//               ),
-//               IconButton(
-//                 icon: const Icon(size: 36, Icons.account_circle_outlined),
-//                 color: Theme.of(context).colorScheme.onBackground,
-//                 onPressed: () {
-//                   Navigator.pushNamed(context, '/configscreen');
-//                 },
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'filemanager.dart';
 import 'dart:io';
@@ -135,7 +8,7 @@ class MainScreen extends StatefulWidget {
   const MainScreen({Key? key, this.title = ""}) : super(key: key);
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -161,6 +34,7 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             AppBarView(),
             MusicSheetsView(tabHeight: tabHeight),
+            ActionsButton(),
           ],
         ),
       ),
@@ -232,7 +106,7 @@ class MusicSheetsView extends StatefulWidget {
   const MusicSheetsView({super.key, this.tabHeight = 0});
 
   @override
-  _MusicSheetsViewState createState() => _MusicSheetsViewState();
+  State<MusicSheetsView> createState() => _MusicSheetsViewState();
 }
 
 class _MusicSheetsViewState extends State<MusicSheetsView> {
@@ -388,6 +262,65 @@ class MusicSheetCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ActionsButton extends StatefulWidget {
+  const ActionsButton({super.key});
+
+  @override
+  State<ActionsButton> createState() => _ActionsButtonState();
+}
+
+class _ActionsButtonState extends State<ActionsButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 32,
+      right: 32,
+      child: Container(
+        height: 64,
+        width: 64,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(32),
+        ),
+        child: IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              elevation: 500,
+              builder: (context) {
+                return SizedBox(
+                  width: 300,
+                  height: 300,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.file_upload),
+                        title: Text('Upload PDF'),
+                        onTap: () {
+                          FileManager.systemPickAndUploadFile();
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.camera_alt),
+                        title: Text('Take Photo'),
+                        onTap: () {
+                          // TODO: photos feature
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );

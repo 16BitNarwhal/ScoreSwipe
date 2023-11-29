@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FileManager {
-  static Future<File?> systemFilePicker() async {
+  static Future<File?> systemPickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
@@ -29,7 +29,7 @@ class FileManager {
     return files;
   }
 
-  static void systemFilePickAndCopy() async {
+  static void systemPickAndUploadFile() async {
     List<File>? files = await systemMultipleFilePicker();
     if (files == null) return;
 
@@ -45,7 +45,7 @@ class FileManager {
     await file.delete();
   }
 
-  static Future<Directory?> systemDirectoryPicker() async {
+  static Future<Directory?> systemPickDirectory() async {
     String? directory = await FilePicker.platform.getDirectoryPath();
     if (directory == null) return null;
     return Directory(directory);
