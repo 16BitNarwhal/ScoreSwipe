@@ -143,7 +143,7 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
                   Row(
                     children: [
                       Text(
-                        'Music',
+                        'Scores',
                         style: TextStyle(
                             fontSize: 18,
                             color: Theme.of(context).colorScheme.onBackground,
@@ -253,11 +253,15 @@ class MusicSheetCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // image with top borders
-            Image.asset(
-              'assets/images/placeholder.png',
-              fit: BoxFit.cover,
-              height: 160,
+            Expanded(
+              child: FutureBuilder(
+                  future: FileManager.getThumbnail(scoreFile,
+                      width: 100, height: 160),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? snapshot.data as RawImage
+                        : Container();
+                  }),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:pdf_render/pdf_render.dart';
 
 class FileManager {
   static Future<File?> systemPickFile() async {
@@ -70,5 +72,20 @@ class FileManager {
     print("Found ${pdfFiles.length} PDF files");
 
     return pdfFiles;
+  }
+
+  static Future<RawImage?> getThumbnail(File file,
+      {int? width, int? height}) async {
+    PdfDocument doc = await PdfDocument.openFile(file.path);
+    PdfPage page = await doc.getPage(1);
+    PdfPageImage pageImage = await page.render();
+    doc.dispose();
+    await pageImage.createImageIfNotAvailable();
+    RawImage image = RawImage(
+      image: pageImage.imageIfAvailable,
+      fit: BoxFit.fitWidth,
+      alignment: Alignment.topCenter,
+    );
+    return image;
   }
 }

@@ -44,6 +44,7 @@ dependencies:
   shared_preferences: ^2.2.1
   permission_handler: ^11.1.0
   path_provider: ^2.1.1
+  pdf_render: ^1.4.2
 
 dev_dependencies:
   flutter_test:
