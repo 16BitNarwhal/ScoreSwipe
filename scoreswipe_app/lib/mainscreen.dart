@@ -121,72 +121,79 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
       left: 0,
       right: 0,
       height: widget.tabHeight,
-      child: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          ),
-          padding: const EdgeInsets.all(32),
-          child: FutureBuilder(
-            future: FileManager.listAllPdfFiles(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              scoreFiles = snapshot.data as List<File>;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Scores',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.onBackground,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'Sort Most Recent',
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).colorScheme.onBackground,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_down,
-                            size: 32,
-                            color: Theme.of(context).colorScheme.onBackground),
-                        onPressed: () {
-                          // Handle sort icon tap
-                        },
-                      ),
-                    ],
-                  ),
-                  for (File scoreFile in scoreFiles)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: MusicSheetCard(scoreFile: scoreFile),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(30)),
+            ),
+            padding: const EdgeInsets.all(32),
+            child: FutureBuilder(
+              future: FileManager.listAllPdfFiles(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                scoreFiles = snapshot.data as List<File>;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Scores',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.onBackground,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        const Spacer(),
+                        Text(
+                          'Sort Most Recent',
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.onBackground,
+                              fontWeight: FontWeight.w400),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.arrow_drop_down,
+                              size: 32,
+                              color:
+                                  Theme.of(context).colorScheme.onBackground),
+                          onPressed: () {
+                            // Handle sort icon tap
+                          },
+                        ),
+                      ],
                     ),
-                  // TODO: super hacky solution
-                  (widget.tabHeight -
-                              64 -
-                              32 -
-                              scoreFiles.length * (200 + 8 * 2) >
-                          0)
-                      ? SizedBox(
-                          height: widget.tabHeight -
-                              64 -
-                              32 -
-                              scoreFiles.length * (200 + 8 * 2))
-                      : Container(),
-                ],
-              );
-            },
+                    for (File scoreFile in scoreFiles)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: MusicSheetCard(scoreFile: scoreFile),
+                      ),
+                    // TODO: super hacky solution
+                    (widget.tabHeight -
+                                64 -
+                                32 -
+                                scoreFiles.length * (200 + 8 * 2) >
+                            0)
+                        ? SizedBox(
+                            height: widget.tabHeight -
+                                64 -
+                                32 -
+                                scoreFiles.length * (200 + 8 * 2))
+                        : Container(),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
