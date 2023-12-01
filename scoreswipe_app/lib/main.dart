@@ -35,10 +35,10 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           fontFamily: 'Inter',
         ),
-        initialRoute: '/titlescreen',
+        initialRoute: '/mainscreen',
         routes: {
           '/mainscreen': (context) => MainScreen(title: title),
-          '/titlescreen': (context) => TitleScreen(title: title),
+          // '/titlescreen': (context) => TitleScreen(title: title),
           '/pdfscreen': (context) => PdfScreen(title: title),
           '/configscreen': (context) => ConfigScreen(title: 'Settings'),
         });
