@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'filemanager.dart';
-import 'dart:io';
 import 'scoredata.dart';
+import 'editform.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -112,6 +112,10 @@ class MusicSheetsView extends StatefulWidget {
 class _MusicSheetsViewState extends State<MusicSheetsView> {
   late List<ScoreData> scores = [];
 
+  void refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedPositioned(
@@ -123,7 +127,7 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
       height: widget.tabHeight,
       child: RefreshIndicator(
         onRefresh: () async {
-          setState(() {});
+          refresh();
         },
         child: SingleChildScrollView(
           child: Container(
@@ -177,7 +181,8 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
                     for (ScoreData scoreData in scores)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: MusicSheetCard(scoreData: scoreData),
+                        child: MusicSheetCard(
+                            scoreData: scoreData, refresh: refresh),
                       ),
                     // TODO: super hacky solution
                     (widget.tabHeight -
@@ -205,11 +210,12 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
 class MusicSheetCard extends StatelessWidget {
   const MusicSheetCard({
     super.key,
-    // required this.i,
     required this.scoreData,
+    required this.refresh,
   });
 
   final ScoreData scoreData;
+  final Function refresh;
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +270,7 @@ class MusicSheetCard extends StatelessWidget {
           ),
         ),
         FavoriteButton(scoreData: scoreData),
-        EditButton(scoreData: scoreData),
+        EditButton(scoreData: scoreData, refresh: refresh),
       ],
     );
   }
@@ -315,18 +321,12 @@ class _FavoriteButtonState extends State<FavoriteButton> {
   }
 }
 
-class EditButton extends StatefulWidget {
-  const EditButton({super.key, required this.scoreData});
-
+class EditButton extends StatelessWidget {
   final ScoreData scoreData;
+  final Function refresh;
 
-  @override
-  State<EditButton> createState() => _EditButtonState();
-}
-
-class _EditButtonState extends State<EditButton> {
-  String titleController = "";
-  List<String> genresController = [];
+  const EditButton({Key? key, required this.scoreData, required this.refresh})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -338,104 +338,8 @@ class _EditButtonState extends State<EditButton> {
           showDialog(
             context: context,
             builder: (context) {
-              return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setEditState) {
-                  return AlertDialog(
-                    title: Text(
-                      'Edit Score',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    content: SingleChildScrollView(
-                      child: ListBody(
-                        children: <Widget>[
-                          TextField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                              ),
-                              labelText: 'Title',
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                            onChanged: (value) {
-                              setEditState(() {
-                                titleController = value;
-                              });
-                            },
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
-                          ),
-                          const SizedBox(height: 16),
-                          TextField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                              ),
-                              labelText: 'Genres',
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                            onChanged: (value) {
-                              setEditState(() {
-                                genresController = value
-                                    .split(',')
-                                    .map((e) => e.trim())
-                                    .toList();
-                              });
-                            },
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          widget.scoreData.deleteScore();
-                          Navigator.of(context).pop();
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                        child: const Text('Delete',
-                            style: TextStyle(fontSize: 20)),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor:
-                              Theme.of(context).colorScheme.primary,
-                        ),
-                        child: const Text('Cancel',
-                            style: TextStyle(fontSize: 20)),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          widget.scoreData.title = titleController;
-                          widget.scoreData.genres = genresController;
-                          widget.scoreData.saveMetadata();
-                          Navigator.of(context).pop();
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor:
-                              Theme.of(context).colorScheme.primary,
-                        ),
-                        child:
-                            const Text('Save', style: TextStyle(fontSize: 20)),
-                      ),
-                    ],
-                  );
-                },
-              );
+              return Dialog(
+                  child: EditForm(scoreData: scoreData, refresh: refresh));
             },
           );
         },
@@ -462,6 +366,122 @@ class _EditButtonState extends State<EditButton> {
     );
   }
 }
+
+// class EditButton extends StatefulWidget {
+//   const EditButton({super.key, required this.scoreData});
+
+//   final ScoreData scoreData;
+
+//   @override
+//   State<EditButton> createState() => _EditButtonState();
+// }
+
+// class _EditButtonState extends State<EditButton> {
+//   String titleController = "";
+//   List<String> genresController = [];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Positioned(
+//       top: 8,
+//       right: 8,
+//       child: GestureDetector(
+//         onTap: () {
+//           showDialog(
+//             context: context,
+//             builder: (context) {
+//               return AlertDialog(
+//                 title: Text(
+//                   'Edit Score',
+//                   style:
+//                       TextStyle(color: Theme.of(context).colorScheme.primary),
+//                 ),
+//                 backgroundColor: Theme.of(context).colorScheme.background,
+//                 content: SingleChildScrollView(
+//                   child: ListBody(
+//                     children: <Widget>[
+//                       TextField(
+//                         decoration: InputDecoration(
+//                           border: OutlineInputBorder(
+//                             borderSide: BorderSide(
+//                                 color: Theme.of(context).colorScheme.primary),
+//                           ),
+//                           labelText: 'Title',
+//                           labelStyle: TextStyle(
+//                               color: Theme.of(context).colorScheme.primary),
+//                         ),
+//                         onChanged: (value) {
+//                           setState(() {
+//                             titleController = value;
+//                           });
+//                         },
+//                         style: TextStyle(
+//                             color: Theme.of(context).colorScheme.primary),
+//                       ),
+//                       const SizedBox(height: 16),
+//                       TextField(
+//                         decoration: InputDecoration(
+//                           border: OutlineInputBorder(
+//                             borderSide: BorderSide(
+//                                 color: Theme.of(context).colorScheme.primary),
+//                           ),
+//                           labelText: 'Genres',
+//                           labelStyle: TextStyle(
+//                               color: Theme.of(context).colorScheme.primary),
+//                         ),
+//                         onChanged: (value) {
+//                           setState(() {
+//                             genresController =
+//                                 value.split(',').map((e) => e.trim()).toList();
+//                           });
+//                         },
+//                         style: TextStyle(
+//                             color: Theme.of(context).colorScheme.primary),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 actions: <Widget>[
+//                   TextButton(
+//                     onPressed: () {
+//                       widget.scoreData.deleteScore();
+//                       Navigator.of(context).pop();
+//                     },
+//                     style: TextButton.styleFrom(
+//                       foregroundColor: Theme.of(context).colorScheme.error,
+//                     ),
+//                     child: const Text('Delete', style: TextStyle(fontSize: 20)),
+//                   ),
+//                   TextButton(
+//                     onPressed: () {
+//                       Navigator.of(context).pop();
+//                     },
+//                     style: TextButton.styleFrom(
+//                       foregroundColor: Theme.of(context).colorScheme.primary,
+//                     ),
+//                     child: const Text('Cancel', style: TextStyle(fontSize: 20)),
+//                   ),
+//                   TextButton(
+//                     onPressed: () {
+//                       widget.scoreData.title = titleController;
+//                       widget.scoreData.genres = genresController;
+//                       widget.scoreData.saveMetadata();
+//                       Navigator.of(context).pop();
+//                     },
+//                     style: TextButton.styleFrom(
+//                       foregroundColor: Theme.of(context).colorScheme.primary,
+//                     ),
+//                     child: const Text('Save', style: TextStyle(fontSize: 20)),
+//                   ),
+//                 ],
+//               );
+//             },
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 class ActionsButton extends StatefulWidget {
   const ActionsButton({super.key});

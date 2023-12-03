@@ -83,7 +83,7 @@ class ScoreData {
     saveMetadata();
   }
 
-  void saveMetadata() async {
+  Future<void> saveMetadata() async {
     print("Saving metadata");
     Map<String, dynamic> metadata = {
       "title": title,
@@ -98,10 +98,10 @@ class ScoreData {
     await metadataFile.writeAsString(jsonEncode(metadata), flush: true);
   }
 
-  void deleteScore() {
-    pdfFile.deleteSync();
+  Future<void> deleteScore() async {
+    await pdfFile.delete();
     File metadataFile = File("${pdfFile.path}.metadata");
-    metadataFile.deleteSync();
+    await metadataFile.delete();
   }
 
   @override
