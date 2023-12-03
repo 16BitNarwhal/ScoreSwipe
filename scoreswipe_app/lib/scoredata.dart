@@ -24,7 +24,6 @@ class ScoreData {
   }
 
   Future<void> loadMetadata() async {
-    print("Loading metadata");
     String metadataString = await metadataFile.readAsString();
     Map<String, dynamic> metadata;
     metadata = jsonDecode(metadataString);
@@ -61,8 +60,6 @@ class ScoreData {
     } else {
       uploaded = DateTime.now();
     }
-    print("Loaded metadata");
-    print(metadata);
     saveMetadata();
   }
 

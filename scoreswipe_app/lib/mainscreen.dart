@@ -328,28 +328,6 @@ class _EditButtonState extends State<EditButton> {
   String titleController = "";
   List<String> genresController = [];
 
-  Widget buildEditModal() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      foregroundDecoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.surface,
-          width: 2,
-        ),
-      ),
-      height: 40,
-      width: 40,
-      child: Icon(
-        Icons.edit,
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -363,26 +341,45 @@ class _EditButtonState extends State<EditButton> {
               return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setEditState) {
                   return AlertDialog(
-                    title: const Text('Edit Score'),
+                    title: Text(
+                      'Edit Score',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.background,
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
                           TextField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
                               labelText: 'Title',
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
                             ),
                             onChanged: (value) {
                               setEditState(() {
                                 titleController = value;
                               });
                             },
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
                           ),
                           const SizedBox(height: 16),
                           TextField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
                               labelText: 'Genres',
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
                             ),
                             onChanged: (value) {
                               setEditState(() {
@@ -392,32 +389,48 @@ class _EditButtonState extends State<EditButton> {
                                     .toList();
                               });
                             },
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
                           ),
                         ],
                       ),
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('Delete'),
                         onPressed: () {
                           widget.scoreData.deleteScore();
                           Navigator.of(context).pop();
                         },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                        child: const Text('Delete',
+                            style: TextStyle(fontSize: 20)),
                       ),
                       TextButton(
-                        child: const Text('Cancel'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
+                        style: TextButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ),
+                        child: const Text('Cancel',
+                            style: TextStyle(fontSize: 20)),
                       ),
                       TextButton(
-                        child: const Text('Save'),
                         onPressed: () {
                           widget.scoreData.title = titleController;
                           widget.scoreData.genres = genresController;
                           widget.scoreData.saveMetadata();
                           Navigator.of(context).pop();
                         },
+                        style: TextButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ),
+                        child:
+                            const Text('Save', style: TextStyle(fontSize: 20)),
                       ),
                     ],
                   );
