@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'filemanager.dart';
 import 'dart:io';
+import 'scoredata.dart';
 
 class MainScreen extends StatefulWidget {
-  final String title;
-
-  const MainScreen({Key? key, this.title = ""}) : super(key: key);
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -34,10 +34,10 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             const AppBarView(),
             MusicSheetsView(tabHeight: tabHeight),
-            const ActionsButton(),
           ],
         ),
       ),
+      floatingActionButton: const ActionsButton(),
     );
   }
 }
@@ -110,7 +110,7 @@ class MusicSheetsView extends StatefulWidget {
 }
 
 class _MusicSheetsViewState extends State<MusicSheetsView> {
-  late List<File> scoreFiles = [];
+  late List<ScoreData> scores = [];
 
   @override
   Widget build(BuildContext context) {
@@ -134,14 +134,15 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
             ),
             padding: const EdgeInsets.all(32),
             child: FutureBuilder(
-              future: FileManager.listAllPdfFiles(),
+              future: ScoreData.getAllScores(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (!snapshot.hasData ||
+                    snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-                scoreFiles = snapshot.data as List<File>;
+                scores = snapshot.data as List<ScoreData>;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -173,22 +174,22 @@ class _MusicSheetsViewState extends State<MusicSheetsView> {
                         ),
                       ],
                     ),
-                    for (File scoreFile in scoreFiles)
+                    for (ScoreData scoreData in scores)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: MusicSheetCard(scoreFile: scoreFile),
+                        child: MusicSheetCard(scoreData: scoreData),
                       ),
                     // TODO: super hacky solution
                     (widget.tabHeight -
                                 64 -
                                 32 -
-                                scoreFiles.length * (200 + 8 * 2) >
+                                scores.length * (200 + 8 * 2) >
                             0)
                         ? SizedBox(
                             height: widget.tabHeight -
                                 64 -
                                 32 -
-                                scoreFiles.length * (200 + 8 * 2))
+                                scores.length * (200 + 8 * 2))
                         : Container(),
                   ],
                 );
@@ -205,84 +206,244 @@ class MusicSheetCard extends StatelessWidget {
   const MusicSheetCard({
     super.key,
     // required this.i,
-    required this.scoreFile,
+    required this.scoreData,
   });
 
-  final File scoreFile;
+  final ScoreData scoreData;
 
-  Widget deleteDialog(BuildContext context) {
-    return AlertDialog(
-      title: Text("Delete ${scoreFile.path.split('/').last}?"),
-      content: Text(
-        "This action cannot be undone.",
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-      ),
-      actions: [
-        TextButton(
-          child: const Text("Cancel"),
-          onPressed: () {
-            Navigator.pop(context);
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: () async {
+            if (context.mounted) {
+              scoreData.setLastOpened();
+              Navigator.pushNamed(context, '/pdfscreen',
+                  arguments: {'file': scoreData.pdfFile});
+            }
           },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            foregroundDecoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.surface,
+                width: 2,
+              ),
+            ),
+            height: 200,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: FutureBuilder(
+                      // TODO: put this into scoreData?
+                      future: FileManager.getThumbnail(scoreData.pdfFile,
+                          width: 100, height: 160),
+                      builder: (context, snapshot) {
+                        return snapshot.hasData
+                            ? snapshot.data as RawImage
+                            : Container();
+                      }),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Text(
+                    scoreData.title,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        TextButton(
-          child: const Text("Delete"),
-          onPressed: () {
-            FileManager.systemDeleteFile(scoreFile);
-            Navigator.pop(context);
-          },
-        ),
+        FavoriteButton(scoreData: scoreData),
+        EditButton(scoreData: scoreData),
       ],
+    );
+  }
+}
+
+class FavoriteButton extends StatefulWidget {
+  const FavoriteButton({super.key, required this.scoreData});
+
+  final ScoreData scoreData;
+
+  @override
+  State<FavoriteButton> createState() => _FavoriteButtonState();
+}
+
+class _FavoriteButtonState extends State<FavoriteButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 8,
+      left: 8,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            widget.scoreData.toggleFavorite();
+          });
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          foregroundDecoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.surface,
+              width: 2,
+            ),
+          ),
+          height: 40,
+          width: 40,
+          child: Icon(
+            widget.scoreData.isFavorite ? Icons.star : Icons.star_border,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class EditButton extends StatefulWidget {
+  const EditButton({super.key, required this.scoreData});
+
+  final ScoreData scoreData;
+
+  @override
+  State<EditButton> createState() => _EditButtonState();
+}
+
+class _EditButtonState extends State<EditButton> {
+  String titleController = "";
+  List<String> genresController = [];
+
+  Widget buildEditModal() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.surface,
+          width: 2,
+        ),
+      ),
+      height: 40,
+      width: 40,
+      child: Icon(
+        Icons.edit,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        if (context.mounted) {
-          Navigator.pushNamed(context, '/pdfscreen',
-              arguments: {'file': scoreFile});
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        foregroundDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
+    return Positioned(
+      top: 8,
+      right: 8,
+      child: GestureDetector(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setEditState) {
+                  return AlertDialog(
+                    title: const Text('Edit Score'),
+                    content: SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          TextField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Title',
+                            ),
+                            onChanged: (value) {
+                              setEditState(() {
+                                titleController = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Genres',
+                            ),
+                            onChanged: (value) {
+                              setEditState(() {
+                                genresController = value
+                                    .split(',')
+                                    .map((e) => e.trim())
+                                    .toList();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Delete'),
+                        onPressed: () {
+                          widget.scoreData.deleteScore();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Save'),
+                        onPressed: () {
+                          widget.scoreData.title = titleController;
+                          widget.scoreData.genres = genresController;
+                          widget.scoreData.saveMetadata();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            width: 2,
+            borderRadius: BorderRadius.circular(10),
           ),
-        ),
-        height: 200,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: FutureBuilder(
-                  future: FileManager.getThumbnail(scoreFile,
-                      width: 100, height: 160),
-                  builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? snapshot.data as RawImage
-                        : Container();
-                  }),
+          foregroundDecoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.surface,
+              width: 2,
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                // remove path and extension from filename
-                scoreFile.path
-                    .split('/')
-                    .last
-                    .substring(0, scoreFile.path.split('/').last.length - 4),
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
-              ),
-            ),
-          ],
+          ),
+          height: 40,
+          width: 40,
+          child: Icon(
+            Icons.edit,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ),
     );
@@ -297,53 +458,62 @@ class ActionsButton extends StatefulWidget {
 }
 
 class _ActionsButtonState extends State<ActionsButton> {
+  SpeedDialChild buildSpeedDialChild({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return SpeedDialChild(
+      child: Icon(icon),
+      labelStyle: TextStyle(
+        fontSize: 16.0,
+        fontWeight: FontWeight.w500,
+        color: Theme.of(context).colorScheme.onSecondary,
+      ),
+      labelBackgroundColor: Theme.of(context).colorScheme.secondary,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      foregroundColor: Theme.of(context).colorScheme.onSecondary,
+      label: label,
+      onTap: onTap,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 32,
-      right: 32,
-      child: Container(
-        height: 64,
-        width: 64,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(32),
-        ),
-        child: IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              elevation: 500,
-              builder: (context) {
-                return SizedBox(
-                  width: 300,
-                  height: 300,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.file_upload),
-                        title: const Text('Upload PDF'),
-                        onTap: () {
-                          FileManager.systemPickAndUploadFile();
-                          Navigator.pop(context);
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.camera_alt),
-                        title: const Text('Take Photo'),
-                        onTap: () {
-                          // TODO: photos feature
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
+    return SpeedDial(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      foregroundColor: Theme.of(context).colorScheme.onSecondary,
+      animatedIcon: AnimatedIcons.menu_close, // custom add_close?
+      animatedIconTheme: const IconThemeData(size: 28.0),
+      curve: Curves.easeInOut,
+      tooltip: 'Add Score',
+      spaceBetweenChildren: 8.0,
+      childrenButtonSize: const Size(64, 64),
+      buttonSize: const Size(80, 80),
+      children: [
+        buildSpeedDialChild(
+          icon: Icons.upload_file,
+          label: 'Upload PDF',
+          onTap: () {
+            FileManager.systemPickAndUploadFile();
+            Navigator.pop(context);
           },
         ),
-      ),
+        buildSpeedDialChild(
+          icon: Icons.photo_library,
+          label: 'Upload Photos',
+          onTap: () {
+            // TODO: photos feature
+          },
+        ),
+        buildSpeedDialChild(
+          icon: Icons.camera_alt,
+          label: 'Take Photos',
+          onTap: () {
+            // TODO: photos feature
+          },
+        ),
+      ],
     );
   }
 }

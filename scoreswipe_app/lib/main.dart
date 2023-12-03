@@ -37,10 +37,10 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/mainscreen',
         routes: {
-          '/mainscreen': (context) => MainScreen(title: title),
+          '/mainscreen': (context) => const MainScreen(),
           // '/titlescreen': (context) => TitleScreen(title: title),
-          '/pdfscreen': (context) => PdfScreen(title: title),
-          '/configscreen': (context) => ConfigScreen(title: 'Settings'),
+          '/pdfscreen': (context) => const PdfScreen(),
+          '/configscreen': (context) => const ConfigScreen(),
         });
   }
 }

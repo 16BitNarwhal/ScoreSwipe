@@ -58,18 +58,13 @@ class FileManager {
 
     Directory appDirectory = await getApplicationDocumentsDirectory();
 
-    print("Listing all PDF files in ${appDirectory.path}");
-
     appDirectory.listSync(recursive: true).forEach((element) {
-      print("Found ${element.path}");
       if (element is File) {
         if (element.path.endsWith(".pdf")) {
           pdfFiles.add(element);
         }
       }
     });
-
-    print("Found ${pdfFiles.length} PDF files");
 
     return pdfFiles;
   }

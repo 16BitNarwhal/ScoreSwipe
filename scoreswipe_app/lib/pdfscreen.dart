@@ -7,9 +7,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'configscreen.dart';
 
 class PdfScreen extends StatefulWidget {
-  const PdfScreen({Key? key, this.title = ""}) : super(key: key);
-
-  final String title;
+  const PdfScreen({Key? key}) : super(key: key);
 
   @override
   State<PdfScreen> createState() => _PdfScreen();

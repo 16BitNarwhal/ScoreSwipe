@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfigScreen extends StatefulWidget {
-  const ConfigScreen({Key? key, this.title = ""}) : super(key: key);
-
-  final String title;
+  const ConfigScreen({Key? key}) : super(key: key);
 
   @override
   State<ConfigScreen> createState() => _ConfigScreenState();
@@ -50,7 +48,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: const Text("Config"),
       ),
       body: Container(
         padding: const EdgeInsets.all(32),
