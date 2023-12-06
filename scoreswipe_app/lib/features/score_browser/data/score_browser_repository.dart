@@ -2,19 +2,17 @@ import 'dart:io';
 import 'local_file_datasource.dart';
 import '../models/score_model.dart';
 
+// deals with score data
 abstract class ScoreRepository {
   Future<List<ScoreModel>> listAllScores();
   Future<ScoreModel> loadScore(String id);
   Future<void> saveScore(ScoreModel score);
   Future<void> deleteScore(ScoreModel score);
   Future<void> updateScore(ScoreModel score);
-  Future<void> pickAndAddScores();
   Future<void> addScores(List<File> files);
 }
 
 class LocalScoreRepository implements ScoreRepository {
-  LocalScoreRepository();
-
   @override
   Future<List<ScoreModel>> listAllScores() async {
     List<File> files = await LocalFileDatasource.listAllFiles("pdf");
@@ -28,6 +26,7 @@ class LocalScoreRepository implements ScoreRepository {
 
   @override
   Future<ScoreModel> loadScore(String id) async {
+    // in local, id is the path to the pdf file
     File metadata =
         await LocalFileDatasource.loadFile("${id.split("/").last}.metadata");
     String metadataString = await metadata.readAsString();
@@ -52,13 +51,6 @@ class LocalScoreRepository implements ScoreRepository {
   Future<void> updateScore(ScoreModel updatedScore) async {
     await deleteScore(updatedScore);
     await saveScore(updatedScore);
-  }
-
-  @override
-  Future<void> pickAndAddScores() async {
-    List<File>? files = await LocalFileDatasource.pickMultipleFiles();
-    if (files == null) return;
-    await addScores(files);
   }
 
   @override
