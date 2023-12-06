@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'filemanager.dart';
-import 'scoredata.dart';
-import 'editform.dart';
+import '../../../filemanager.dart';
+import '../../../scoredata.dart';
+import 'edit_score_widget.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -366,122 +366,6 @@ class EditButton extends StatelessWidget {
     );
   }
 }
-
-// class EditButton extends StatefulWidget {
-//   const EditButton({super.key, required this.scoreData});
-
-//   final ScoreData scoreData;
-
-//   @override
-//   State<EditButton> createState() => _EditButtonState();
-// }
-
-// class _EditButtonState extends State<EditButton> {
-//   String titleController = "";
-//   List<String> genresController = [];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Positioned(
-//       top: 8,
-//       right: 8,
-//       child: GestureDetector(
-//         onTap: () {
-//           showDialog(
-//             context: context,
-//             builder: (context) {
-//               return AlertDialog(
-//                 title: Text(
-//                   'Edit Score',
-//                   style:
-//                       TextStyle(color: Theme.of(context).colorScheme.primary),
-//                 ),
-//                 backgroundColor: Theme.of(context).colorScheme.background,
-//                 content: SingleChildScrollView(
-//                   child: ListBody(
-//                     children: <Widget>[
-//                       TextField(
-//                         decoration: InputDecoration(
-//                           border: OutlineInputBorder(
-//                             borderSide: BorderSide(
-//                                 color: Theme.of(context).colorScheme.primary),
-//                           ),
-//                           labelText: 'Title',
-//                           labelStyle: TextStyle(
-//                               color: Theme.of(context).colorScheme.primary),
-//                         ),
-//                         onChanged: (value) {
-//                           setState(() {
-//                             titleController = value;
-//                           });
-//                         },
-//                         style: TextStyle(
-//                             color: Theme.of(context).colorScheme.primary),
-//                       ),
-//                       const SizedBox(height: 16),
-//                       TextField(
-//                         decoration: InputDecoration(
-//                           border: OutlineInputBorder(
-//                             borderSide: BorderSide(
-//                                 color: Theme.of(context).colorScheme.primary),
-//                           ),
-//                           labelText: 'Genres',
-//                           labelStyle: TextStyle(
-//                               color: Theme.of(context).colorScheme.primary),
-//                         ),
-//                         onChanged: (value) {
-//                           setState(() {
-//                             genresController =
-//                                 value.split(',').map((e) => e.trim()).toList();
-//                           });
-//                         },
-//                         style: TextStyle(
-//                             color: Theme.of(context).colorScheme.primary),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//                 actions: <Widget>[
-//                   TextButton(
-//                     onPressed: () {
-//                       widget.scoreData.deleteScore();
-//                       Navigator.of(context).pop();
-//                     },
-//                     style: TextButton.styleFrom(
-//                       foregroundColor: Theme.of(context).colorScheme.error,
-//                     ),
-//                     child: const Text('Delete', style: TextStyle(fontSize: 20)),
-//                   ),
-//                   TextButton(
-//                     onPressed: () {
-//                       Navigator.of(context).pop();
-//                     },
-//                     style: TextButton.styleFrom(
-//                       foregroundColor: Theme.of(context).colorScheme.primary,
-//                     ),
-//                     child: const Text('Cancel', style: TextStyle(fontSize: 20)),
-//                   ),
-//                   TextButton(
-//                     onPressed: () {
-//                       widget.scoreData.title = titleController;
-//                       widget.scoreData.genres = genresController;
-//                       widget.scoreData.saveMetadata();
-//                       Navigator.of(context).pop();
-//                     },
-//                     style: TextButton.styleFrom(
-//                       foregroundColor: Theme.of(context).colorScheme.primary,
-//                     ),
-//                     child: const Text('Save', style: TextStyle(fontSize: 20)),
-//                   ),
-//                 ],
-//               );
-//             },
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
 
 class ActionsButton extends StatefulWidget {
   const ActionsButton({super.key});

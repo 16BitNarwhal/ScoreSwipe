@@ -24,9 +24,22 @@ class ScoreData {
   }
 
   Future<void> loadMetadata() async {
+    if (!(await metadataFile.exists())) {
+      print("Metadata file does not exist, creating");
+      await metadataFile.create();
+      print("Created metadata file");
+      await saveMetadata();
+      print("Saved metadata");
+    }
     String metadataString = await metadataFile.readAsString();
+    print("Loaded Metadata");
     Map<String, dynamic> metadata;
-    metadata = jsonDecode(metadataString);
+    if (metadataString == "") {
+      metadata = {};
+    } else {
+      metadata = jsonDecode(metadataString);
+    }
+    print("Decoded metadata: $metadata");
 
     if (metadata["title"] != null && metadata["title"].runtimeType == String) {
       title = metadata["title"];
@@ -92,9 +105,12 @@ class ScoreData {
       "lastOpened": lastOpened.toString(),
       "uploaded": uploaded.toString(),
     };
+    print("Metadata: $metadata");
     if (!(await metadataFile.exists())) {
+      print("Metadata file does not exist, creating");
       await metadataFile.create();
     }
+    print("Writing metadata: $metadata");
     await metadataFile.writeAsString(jsonEncode(metadata), flush: true);
   }
 
@@ -117,6 +133,7 @@ class ScoreData {
     print("Searching for metadata files");
     for (File file in pdfFiles) {
       ScoreData scoreData = ScoreData(file);
+      print("Found metadata file for ${file.path}");
       await scoreData.init();
 
       print("Generated score data");

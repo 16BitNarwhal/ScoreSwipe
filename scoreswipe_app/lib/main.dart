@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'pdfscreen.dart';
-import 'mainscreen.dart';
-import 'configscreen.dart';
+import 'features/score_viewer/screens/score_viewer.dart';
+import 'features/score_browser/ui/score_browser_screen.dart';
+import 'features/score_viewer/screens/configscreen.dart';
 import 'titlescreen.dart';
 
 void main() {

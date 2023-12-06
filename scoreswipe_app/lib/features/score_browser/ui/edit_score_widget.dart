@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'scoredata.dart';
+import '../../../scoredata.dart';
 
 class EditForm extends StatefulWidget {
   final ScoreData scoreData;
