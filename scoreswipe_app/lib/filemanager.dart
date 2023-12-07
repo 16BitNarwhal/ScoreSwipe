@@ -43,28 +43,6 @@ class FileManager {
     }
   }
 
-  // static Future<File?> pickSingleFile() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //       type: FileType.custom,
-  //       allowedExtensions: ['pdf'],
-  //       allowMultiple: false);
-  //   if (result == null || result.files.isEmpty) return null;
-
-  //   return File(result.files.single.path!);
-  // }
-
-  // static Future<List<File>?> pickMultipleFiles() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //       type: FileType.custom, allowedExtensions: ['pdf'], allowMultiple: true);
-  //   if (result == null || result.files.isEmpty) return null;
-
-  //   List<File> files = [];
-  //   for (PlatformFile file in result.files) {
-  //     files.add(File(file.path!));
-  //   }
-  //   return files;
-  // }
-
   static void systemDeleteFile(File file) async {
     await file.delete();
   }

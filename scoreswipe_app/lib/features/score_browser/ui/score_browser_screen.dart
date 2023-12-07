@@ -20,28 +20,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  double tabHeight = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        tabHeight = MediaQuery.of(context).size.height * 0.75;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
-      body: SafeArea(
+      body: const SafeArea(
         child: Stack(
           children: [
-            const AppBarView(),
-            MusicSheetsView(tabHeight: tabHeight),
+            AppBarView(),
+            MusicSheetsView(),
           ],
         ),
       ),
@@ -51,14 +38,13 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class AppBarView extends StatelessWidget {
-  final int tabHeight;
-  const AppBarView({super.key, this.tabHeight = 0});
+  const AppBarView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.secondary,
-      height: MediaQuery.of(context).size.height - tabHeight,
+      height: MediaQuery.of(context).size.height,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

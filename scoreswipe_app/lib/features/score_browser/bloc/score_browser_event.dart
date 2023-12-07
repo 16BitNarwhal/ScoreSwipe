@@ -19,6 +19,8 @@ final class AddScore extends ScoreBrowserEvent {
   List<Object> get props => [score];
 }
 
+final class AddScoreFromFilePicker extends ScoreBrowserEvent {}
+
 final class RemoveScore extends ScoreBrowserEvent {
   final ScoreModel score;
 
