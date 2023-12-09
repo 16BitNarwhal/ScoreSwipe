@@ -28,6 +28,34 @@ class _ActionsButtonState extends State<ActionsButton> {
     );
   }
 
+  // TODO: move to a separate class / make it work in the BLoC
+  void addFileFromPicker() async {
+    FilePickerResult? file = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (file == null || file.files.isEmpty) {
+      Logger().i('No files selected');
+      return;
+    }
+
+    List<Future<void>> futures = [];
+    for (PlatformFile platformFile in file.files) {
+      final score = ScoreModel.fromPdfFile(File(platformFile.path!));
+      futures
+          .add(score.createThumbnailImage()); // TODO: move to a separate class
+      if (context.mounted) {
+        BlocProvider.of<ScoreBrowserBloc>(context).add(AddScore(score));
+      }
+    }
+    Logger().i('Added ${file.files.length} scores');
+    await Future.wait(futures);
+    if (context.mounted) {
+      BlocProvider.of<ScoreBrowserBloc>(context).add(LoadScores());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SpeedDial(
@@ -45,8 +73,7 @@ class _ActionsButtonState extends State<ActionsButton> {
           icon: Icons.upload_file,
           label: 'Upload PDF',
           onTap: () {
-            FileManager.systemPickAndUploadFile();
-            Navigator.pop(context);
+            addFileFromPicker();
           },
         ),
         buildSpeedDialChild(

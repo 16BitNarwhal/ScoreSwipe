@@ -1,9 +1,9 @@
 part of 'score_browser_screen.dart';
 
 class FavoriteButton extends StatefulWidget {
-  const FavoriteButton({super.key, required this.scoreData});
+  const FavoriteButton({super.key, required this.score});
 
-  final ScoreData scoreData;
+  final ScoreModel score;
 
   @override
   State<FavoriteButton> createState() => _FavoriteButtonState();
@@ -18,7 +18,8 @@ class _FavoriteButtonState extends State<FavoriteButton> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            widget.scoreData.toggleFavorite();
+            // TODO: toggle favorite of score using BLoC?
+            // widget.score.toggleFavorite();
           });
         },
         child: Container(
@@ -36,7 +37,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
           height: 40,
           width: 40,
           child: Icon(
-            widget.scoreData.isFavorite ? Icons.star : Icons.star_border,
+            widget.score.isFavorite ? Icons.star : Icons.star_border,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),

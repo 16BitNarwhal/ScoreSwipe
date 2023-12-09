@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import '../../../filemanager.dart';
-import '../../../scoredata.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:file_picker/file_picker.dart';
+import '../../../filemanager.dart'; // TODO: this is a temporary fix
+import 'dart:io';
 
+import '../models/score_model.dart';
 import '../bloc/score_browser_bloc.dart';
+
+import 'package:logger/logger.dart';
 
 part 'add_score_button.dart';
 part 'edit_score_form.dart';
@@ -12,14 +17,14 @@ part 'favorite_button.dart';
 part 'score_list.dart';
 part 'score_card.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+class ScoreBrowserScreen extends StatefulWidget {
+  const ScoreBrowserScreen({Key? key}) : super(key: key);
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<ScoreBrowserScreen> createState() => _ScoreBrowserScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

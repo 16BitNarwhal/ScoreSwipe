@@ -1,10 +1,10 @@
 part of 'score_browser_screen.dart';
 
 class EditForm extends StatefulWidget {
-  final ScoreData scoreData;
+  final ScoreModel score;
   final Function refresh;
 
-  EditForm({Key? key, required this.scoreData, required this.refresh})
+  EditForm({Key? key, required this.score, required this.refresh})
       : super(key: key);
 
   @override
@@ -20,8 +20,8 @@ class _EditFormState extends State<EditForm> {
   @override
   void initState() {
     super.initState();
-    widget._titleController.text = widget.scoreData.title;
-    TextEditingController(text: widget.scoreData.genres.join(", "));
+    widget._titleController.text = widget.score.scoreName;
+    // TextEditingController(text: widget.score.genres.join(", "));
   }
 
   @override
@@ -112,7 +112,8 @@ class _EditFormState extends State<EditForm> {
                                       color:
                                           Theme.of(context).colorScheme.error)),
                               onPressed: () async {
-                                await widget.scoreData.deleteScore();
+                                // TODO: delete score
+                                // await widget.score.deleteScore();
                                 if (context.mounted) {
                                   Navigator.of(context).pop(); // pop alert
                                   Navigator.of(context).pop(); // pop edit form
@@ -139,10 +140,11 @@ class _EditFormState extends State<EditForm> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    widget.scoreData.setTitle(widget._titleController.text);
-                    widget.scoreData
-                        .setGenres(widget._genresController.text.split(","));
-                    await widget.scoreData.saveMetadata();
+                    // TODO: edit score
+                    // widget.score.setTitle(widget._titleController.text);
+                    // widget.score
+                    //     .setGenres(widget._genresController.text.split(","));
+                    // await widget.score.saveMetadata();
                     if (context.mounted) {
                       Navigator.pop(context);
                       widget.refresh();

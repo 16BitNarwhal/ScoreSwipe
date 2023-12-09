@@ -2,28 +2,25 @@ part of 'score_browser_bloc.dart';
 
 @immutable
 sealed class ScoreBrowserState extends Equatable {
-  const ScoreBrowserState();
+  final List<ScoreModel> scores;
+
+  const ScoreBrowserState({this.scores = const []});
 
   @override
   List<Object> get props => [];
 }
 
-final class ScoreBrowserLoading extends ScoreBrowserState {}
+final class ScoreBrowserLoading extends ScoreBrowserState {
+  const ScoreBrowserLoading();
+
+  @override
+  List<Object> get props => [];
+}
 
 final class ScoreBrowserLoaded extends ScoreBrowserState {
-  final List<ScoreModel> scores;
-
-  const ScoreBrowserLoaded({required this.scores});
+  const ScoreBrowserLoaded({required List<ScoreModel> scores})
+      : super(scores: scores);
 
   @override
   List<Object> get props => [scores];
-}
-
-final class ScoreBrowserError extends ScoreBrowserState {
-  final String message;
-
-  const ScoreBrowserError({required this.message});
-
-  @override
-  List<Object> get props => [message];
 }

@@ -3,11 +3,11 @@ part of 'score_browser_screen.dart';
 class MusicSheetCard extends StatelessWidget {
   const MusicSheetCard({
     super.key,
-    required this.scoreData,
+    required this.score,
     required this.refresh,
   });
 
-  final ScoreData scoreData;
+  final ScoreModel score;
   final Function refresh;
 
   @override
@@ -17,9 +17,10 @@ class MusicSheetCard extends StatelessWidget {
         GestureDetector(
           onTap: () async {
             if (context.mounted) {
-              scoreData.setLastOpened();
+              // TODO: open pdf BlocProvider.of<ScoreBrowserBloc>(context).add(OpenPdf(score));
+              // Logger().i('Opening ${score.scoreName} ${score.pdfFile.path}');
               Navigator.pushNamed(context, '/pdfscreen',
-                  arguments: {'file': scoreData.pdfFile});
+                  arguments: {'file': score.pdfFile});
             }
           },
           child: Container(
@@ -41,7 +42,7 @@ class MusicSheetCard extends StatelessWidget {
                 Expanded(
                   child: FutureBuilder(
                       // TODO: put this into scoreData?
-                      future: FileManager.getThumbnail(scoreData.pdfFile,
+                      future: FileManager.getThumbnail(score.pdfFile,
                           width: 100, height: 160),
                       builder: (context, snapshot) {
                         return snapshot.hasData
@@ -53,7 +54,7 @@ class MusicSheetCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text(
-                    scoreData.title,
+                    score.scoreName,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface),
                   ),
@@ -62,8 +63,8 @@ class MusicSheetCard extends StatelessWidget {
             ),
           ),
         ),
-        FavoriteButton(scoreData: scoreData),
-        EditButton(scoreData: scoreData, refresh: refresh),
+        FavoriteButton(score: score),
+        EditButton(score: score, refresh: refresh),
       ],
     );
   }

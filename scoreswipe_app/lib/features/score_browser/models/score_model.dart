@@ -1,62 +1,86 @@
-import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:uuid/uuid.dart';
+import 'package:pdf_render/pdf_render.dart';
+import 'package:image/image.dart' as imglib;
 
 class ScoreModel {
   final String id;
-  final String title;
-  final List<String> genres;
+  final String scoreName;
   final bool isFavorite;
   final DateTime lastOpened;
   final DateTime uploaded;
+  final File pdfFile;
+  ByteData thumbnailImage;
 
   ScoreModel(
       {required this.id,
-      required this.title,
-      required this.genres,
+      required this.scoreName,
       required this.isFavorite,
       required this.lastOpened,
-      required this.uploaded});
+      required this.uploaded,
+      required this.pdfFile,
+      required this.thumbnailImage});
+
+  factory ScoreModel.fromPdfFile(File pdfFile) {
+    // create thumbnail image file from first page of pdf
+
+    return ScoreModel(
+      id: const Uuid().v4(),
+      scoreName: pdfFile.path.split('/').last,
+      isFavorite: false,
+      lastOpened: DateTime.now(),
+      uploaded: DateTime.now(),
+      pdfFile: pdfFile,
+      thumbnailImage: ByteData(0),
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
-      "title": title,
-      "genres": genres,
-      "isFavorite": isFavorite,
-      "lastOpened": lastOpened.toString(),
-      "uploaded": uploaded.toString(),
+      'id': id,
+      'scoreName': scoreName,
+      'isFavorited': isFavorite ? 1 : 0,
+      'lastOpened': lastOpened.millisecondsSinceEpoch,
+      'uploaded': uploaded.millisecondsSinceEpoch,
+      'pdfFile': pdfFile.readAsString(),
+      'thumbnailImage': thumbnailImage.buffer.asUint8List(),
     };
   }
 
   factory ScoreModel.fromMap(Map<String, dynamic> map) {
+    File file = File.fromRawPath(map['pdfFile']);
+    ByteData thumbnailImage = ByteData.view(map['thumbnailImage'].buffer);
     return ScoreModel(
-        id: map["_id"],
-        title: map["title"],
-        genres: map["genres"].map((e) => e.toString()).toList(),
-        isFavorite: map["isFavorite"],
-        lastOpened: DateTime.parse(map["lastOpened"]),
-        uploaded: DateTime.parse(map["uploaded"]));
+      id: map['id'] as String,
+      scoreName: map['scoreName'] as String,
+      isFavorite: map['isFavorited'] == 1 ? true : false,
+      lastOpened: DateTime.fromMillisecondsSinceEpoch(map['lastOpened']),
+      uploaded: DateTime.fromMillisecondsSinceEpoch(map['uploaded']),
+      pdfFile: file,
+      thumbnailImage: thumbnailImage,
+    );
   }
 
-  String toJson() => json.encode(toMap());
+  // TODO: move this to a separate class
+  Future<void> createThumbnailImage() async {
+    PdfDocument doc = await PdfDocument.openFile(pdfFile.path);
+    PdfPage page = await doc.getPage(1);
+    PdfPageImage pdfImage = await page.render();
+    doc.dispose();
+    Image image = await pdfImage.createImageDetached();
+    ByteData? imgBytes = await image.toByteData(format: ImageByteFormat.png);
 
-  factory ScoreModel.fromJson(String source) =>
-      ScoreModel.fromMap(json.decode(source));
+    if (imgBytes == null) {
+      throw Exception('Could not create thumbnail image');
+    }
 
-  ScoreModel copyWith({
-    String? id,
-    String? title,
-    List<String>? genres,
-    bool? isFavorite,
-    DateTime? lastOpened,
-    DateTime? uploaded,
-  }) {
-    return ScoreModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      genres: genres ?? this.genres,
-      isFavorite: isFavorite ?? this.isFavorite,
-      lastOpened: lastOpened ?? this.lastOpened,
-      uploaded: uploaded ?? this.uploaded,
-    );
+    thumbnailImage = imgBytes;
+  }
+
+  @override
+  String toString() {
+    return 'ScoreModel(id: $id, scoreName: $scoreName, isFavorited: $isFavorite, lastOpened: $lastOpened, uploaded: $uploaded)';
   }
 }
