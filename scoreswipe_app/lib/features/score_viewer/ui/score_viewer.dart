@@ -177,7 +177,7 @@ class _PdfScreen extends State<PdfScreen> {
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    File file = arguments['file'];
+    Uint8List filedata = arguments['file'];
 
     return Scaffold(
       // appBar: AppBar(
@@ -192,7 +192,9 @@ class _PdfScreen extends State<PdfScreen> {
       // ],
       // ),
       body: SafeArea(
-        child: SfPdfViewer.file(file, controller: _pdfController),
+        // TODO: SfPdfViewer can be replaced with SfPdfViewer.memory()
+        child: SfPdfViewer.memory(filedata, controller: _pdfController),
+        // child: SfPdfViewer.file(filedata, controller: _pdfController),
       ),
     );
   }

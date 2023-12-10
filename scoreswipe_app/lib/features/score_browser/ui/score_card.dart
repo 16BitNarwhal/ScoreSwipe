@@ -12,6 +12,7 @@ class MusicSheetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Logger().i('Building MusicSheetCard for ${score.scoreName}');
     return Stack(
       children: [
         GestureDetector(
@@ -19,6 +20,7 @@ class MusicSheetCard extends StatelessWidget {
             if (context.mounted) {
               // TODO: open pdf BlocProvider.of<ScoreBrowserBloc>(context).add(OpenPdf(score));
               // Logger().i('Opening ${score.scoreName} ${score.pdfFile.path}');
+
               Navigator.pushNamed(context, '/pdfscreen',
                   arguments: {'file': score.pdfFile});
             }
@@ -40,15 +42,16 @@ class MusicSheetCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  child: FutureBuilder(
-                      // TODO: put this into scoreData?
-                      future: FileManager.getThumbnail(score.pdfFile,
-                          width: 100, height: 160),
-                      builder: (context, snapshot) {
-                        return snapshot.hasData
-                            ? snapshot.data as RawImage
-                            : Container();
-                      }),
+                  // child: FutureBuilder(
+                  //     // TODO: put this into scoreData?
+                  //     future: FileManager.getThumbnail(score.pdfFile,
+                  //         width: 100, height: 160),
+                  //     builder: (context, snapshot) {
+                  //       return snapshot.hasData
+                  //           ? snapshot.data as RawImage
+                  //           : Container();
+                  //     }),
+                  child: Container(),
                 ),
                 Container(
                   padding:

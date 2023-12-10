@@ -19,8 +19,8 @@ class LocalScoreDataSource {
           isFavorited INTEGER NOT NULL,
           lastOpened INTEGER NOT NULL,
           uploaded INTEGER NOT NULL,
-          pdfFile BLOB NOT NULL,
-          thumbnailImage BLOB NOT NULL
+          pdfFile STRING NOT NULL,
+          thumbnailImage STRING NOT NULL
         )
       ''');
     }, version: 1);
@@ -72,13 +72,5 @@ class LocalScoreDataSource {
     return List.generate(maps.length, (i) {
       return ScoreModel.fromMap(maps[i]);
     });
-  }
-
-  static ByteData base64Encode(File file) {
-    return file.readAsBytesSync().buffer.asByteData();
-  }
-
-  static File base64Decode(ByteData data) {
-    return File.fromRawPath(data.buffer.asUint8List());
   }
 }

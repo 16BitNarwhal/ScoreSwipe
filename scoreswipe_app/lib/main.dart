@@ -4,6 +4,8 @@ import 'features/score_browser/ui/score_browser_screen.dart';
 import 'features/score_viewer/ui/configscreen.dart';
 import 'titlescreen.dart';
 
+import 'experiment.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/score_browser/bloc/score_browser_bloc.dart';
 
@@ -44,8 +46,10 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             fontFamily: 'Inter',
           ),
-          initialRoute: '/mainscreen',
+          initialRoute: '/experiment',
           routes: {
+            '/experiment': (context) =>
+                const TestingScreen(), // DONT PUSH TO PROD
             '/mainscreen': (context) => const ScoreBrowserScreen(),
             // '/titlescreen': (context) => TitleScreen(title: title),
             '/pdfscreen': (context) => const PdfScreen(),

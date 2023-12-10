@@ -30,12 +30,13 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         try {
           await LocalScoreDataSource.insertScore(event.score);
 
-          final state = this.state as ScoreBrowserLoaded;
-          emit(
-            ScoreBrowserLoaded(
-              scores: List<ScoreModel>.from(state.scores)..add(event.score),
-            ),
-          );
+          // final state = this.state as ScoreBrowserLoaded;
+          // emit(
+          //   ScoreBrowserLoaded(
+          //     scores: List<ScoreModel>.from(state.scores)..add(event.score),
+          //   ),
+          // );
+          emit(const ScoreBrowserLoading());
 
           Logger().i('Added score ${event.score.scoreName}');
         } catch (error) {

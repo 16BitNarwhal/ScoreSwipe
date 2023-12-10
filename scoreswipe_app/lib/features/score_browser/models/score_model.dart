@@ -4,6 +4,9 @@ import 'dart:ui';
 import 'package:uuid/uuid.dart';
 import 'package:pdf_render/pdf_render.dart';
 import 'package:image/image.dart' as imglib;
+import 'dart:convert';
+
+import 'package:logger/logger.dart';
 
 class ScoreModel {
   final String id;
@@ -11,7 +14,7 @@ class ScoreModel {
   final bool isFavorite;
   final DateTime lastOpened;
   final DateTime uploaded;
-  final File pdfFile;
+  final String pdfFile;
   ByteData thumbnailImage;
 
   ScoreModel(
@@ -32,7 +35,7 @@ class ScoreModel {
       isFavorite: false,
       lastOpened: DateTime.now(),
       uploaded: DateTime.now(),
-      pdfFile: pdfFile,
+      pdfFile: base64Encode(pdfFile.readAsBytesSync()),
       thumbnailImage: ByteData(0),
     );
   }
@@ -44,39 +47,43 @@ class ScoreModel {
       'isFavorited': isFavorite ? 1 : 0,
       'lastOpened': lastOpened.millisecondsSinceEpoch,
       'uploaded': uploaded.millisecondsSinceEpoch,
-      'pdfFile': pdfFile.readAsString(),
+      'pdfFile': pdfFile,
       'thumbnailImage': thumbnailImage.buffer.asUint8List(),
     };
   }
 
   factory ScoreModel.fromMap(Map<String, dynamic> map) {
-    File file = File.fromRawPath(map['pdfFile']);
-    ByteData thumbnailImage = ByteData.view(map['thumbnailImage'].buffer);
-    return ScoreModel(
-      id: map['id'] as String,
-      scoreName: map['scoreName'] as String,
-      isFavorite: map['isFavorited'] == 1 ? true : false,
-      lastOpened: DateTime.fromMillisecondsSinceEpoch(map['lastOpened']),
-      uploaded: DateTime.fromMillisecondsSinceEpoch(map['uploaded']),
-      pdfFile: file,
-      thumbnailImage: thumbnailImage,
-    );
+    try {
+      ByteData thumbnailImage = ByteData.view(map['thumbnailImage'].buffer);
+      return ScoreModel(
+        id: map['id'] as String,
+        scoreName: map['scoreName'] as String,
+        isFavorite: map['isFavorited'] == 1 ? true : false,
+        lastOpened: DateTime.fromMillisecondsSinceEpoch(map['lastOpened']),
+        uploaded: DateTime.fromMillisecondsSinceEpoch(map['uploaded']),
+        pdfFile: map['pdfFile'],
+        thumbnailImage: thumbnailImage,
+      );
+    } catch (error) {
+      Logger().e('ScoreModel.fromMap: $error');
+      rethrow;
+    }
   }
 
   // TODO: move this to a separate class
   Future<void> createThumbnailImage() async {
-    PdfDocument doc = await PdfDocument.openFile(pdfFile.path);
-    PdfPage page = await doc.getPage(1);
-    PdfPageImage pdfImage = await page.render();
-    doc.dispose();
-    Image image = await pdfImage.createImageDetached();
-    ByteData? imgBytes = await image.toByteData(format: ImageByteFormat.png);
+    // PdfDocument doc = await PdfDocument.openFile(pdfFile.path);
+    // PdfPage page = await doc.getPage(1);
+    // PdfPageImage pdfImage = await page.render();
+    // doc.dispose();
+    // Image image = await pdfImage.createImageDetached();
+    // ByteData? imgBytes = await image.toByteData(format: ImageByteFormat.png);
 
-    if (imgBytes == null) {
-      throw Exception('Could not create thumbnail image');
-    }
+    // if (imgBytes == null) {
+    //   throw Exception('Could not create thumbnail image');
+    // }
 
-    thumbnailImage = imgBytes;
+    // thumbnailImage = imgBytes;
   }
 
   @override

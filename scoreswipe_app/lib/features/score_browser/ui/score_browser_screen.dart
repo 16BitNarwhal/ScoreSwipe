@@ -9,6 +9,9 @@ import '../models/score_model.dart';
 import '../bloc/score_browser_bloc.dart';
 
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 part 'add_score_button.dart';
 part 'edit_score_form.dart';
