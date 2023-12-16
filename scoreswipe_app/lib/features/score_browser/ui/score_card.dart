@@ -42,16 +42,13 @@ class MusicSheetCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  // child: FutureBuilder(
-                  //     // TODO: put this into scoreData?
-                  //     future: FileManager.getThumbnail(score.pdfFile,
-                  //         width: 100, height: 160),
-                  //     builder: (context, snapshot) {
-                  //       return snapshot.hasData
-                  //           ? snapshot.data as RawImage
-                  //           : Container();
-                  //     }),
-                  child: Container(),
+                  // render thumbnail image if it exists
+                  child: score.thumbnailImage == ""
+                      ? Container()
+                      : Image.memory(
+                          score.getThumbnailImage(),
+                          fit: BoxFit.cover,
+                        ),
                 ),
                 Container(
                   padding:

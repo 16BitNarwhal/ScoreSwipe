@@ -4,7 +4,7 @@ class MusicSheetsView extends StatelessWidget {
   const MusicSheetsView({super.key});
 
   void refresh() {
-    // setState(() {});
+    ScoreBrowserBloc().add(LoadScores());
   }
 
   @override

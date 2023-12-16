@@ -55,7 +55,10 @@ class ScoreModel {
   factory ScoreModel.fromMap(Map<String, dynamic> map) {
     try {
       map.forEach((key, value) {
-        Logger().wtf('$key: ${value.runtimeType}');
+        if (key == 'thumbnailImage') {
+          Logger().wtf('thumbnailImage: ${value.runtimeType}');
+          Logger().wtf('thumbnailImage: ${value.toString()}');
+        }
       });
       return ScoreModel(
         id: map['id'] as String,
@@ -73,19 +76,24 @@ class ScoreModel {
   }
 
   // TODO: move this to a separate class
-  Future<void> createThumbnailImage() async {
-    // PdfDocument doc = await PdfDocument.openFile(pdfFile.path);
-    // PdfPage page = await doc.getPage(1);
-    // PdfPageImage pdfImage = await page.render();
-    // doc.dispose();
-    // Image image = await pdfImage.createImageDetached();
-    // ByteData? imgBytes = await image.toByteData(format: ImageByteFormat.png);
+  Future<String> createThumbnailImage() async {
+    PdfDocument doc = await PdfDocument.openData(base64Decode(pdfFile));
+    PdfPage page = await doc.getPage(1);
+    PdfPageImage pdfImage = await page.render();
+    doc.dispose();
+    Image image = await pdfImage.createImageDetached();
+    ByteData? imgBytes = await image.toByteData(format: ImageByteFormat.png);
 
-    // if (imgBytes == null) {
-    //   throw Exception('Could not create thumbnail image');
-    // }
+    if (imgBytes == null) {
+      throw Exception('Could not create thumbnail image');
+    }
 
-    // thumbnailImage = imgBytes;
+    thumbnailImage = base64Encode(imgBytes.buffer.asUint8List());
+    return thumbnailImage!;
+  }
+
+  Uint8List getThumbnailImage() {
+    return Uint8List.fromList(base64Decode(thumbnailImage!));
   }
 
   @override
