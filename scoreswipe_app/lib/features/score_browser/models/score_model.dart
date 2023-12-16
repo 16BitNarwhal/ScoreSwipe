@@ -15,7 +15,7 @@ class ScoreModel {
   final DateTime lastOpened;
   final DateTime uploaded;
   final String pdfFile;
-  ByteData thumbnailImage;
+  String? thumbnailImage;
 
   ScoreModel(
       {required this.id,
@@ -24,7 +24,7 @@ class ScoreModel {
       required this.lastOpened,
       required this.uploaded,
       required this.pdfFile,
-      required this.thumbnailImage});
+      this.thumbnailImage});
 
   factory ScoreModel.fromPdfFile(File pdfFile) {
     // create thumbnail image file from first page of pdf
@@ -36,7 +36,7 @@ class ScoreModel {
       lastOpened: DateTime.now(),
       uploaded: DateTime.now(),
       pdfFile: base64Encode(pdfFile.readAsBytesSync()),
-      thumbnailImage: ByteData(0),
+      thumbnailImage: "",
     );
   }
 
@@ -48,21 +48,23 @@ class ScoreModel {
       'lastOpened': lastOpened.millisecondsSinceEpoch,
       'uploaded': uploaded.millisecondsSinceEpoch,
       'pdfFile': pdfFile,
-      'thumbnailImage': thumbnailImage.buffer.asUint8List(),
+      'thumbnailImage': thumbnailImage,
     };
   }
 
   factory ScoreModel.fromMap(Map<String, dynamic> map) {
     try {
-      ByteData thumbnailImage = ByteData.view(map['thumbnailImage'].buffer);
+      map.forEach((key, value) {
+        Logger().wtf('$key: ${value.runtimeType}');
+      });
       return ScoreModel(
         id: map['id'] as String,
         scoreName: map['scoreName'] as String,
         isFavorite: map['isFavorited'] == 1 ? true : false,
         lastOpened: DateTime.fromMillisecondsSinceEpoch(map['lastOpened']),
         uploaded: DateTime.fromMillisecondsSinceEpoch(map['uploaded']),
-        pdfFile: map['pdfFile'],
-        thumbnailImage: thumbnailImage,
+        pdfFile: map['pdfFile'] as String,
+        thumbnailImage: map['thumbnailImage'] as String,
       );
     } catch (error) {
       Logger().e('ScoreModel.fromMap: $error');

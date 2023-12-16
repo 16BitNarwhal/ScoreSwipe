@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'configscreen.dart';
+import 'dart:convert';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({Key? key}) : super(key: key);
@@ -177,7 +178,7 @@ class _PdfScreen extends State<PdfScreen> {
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    Uint8List filedata = arguments['file'];
+    String filedata = arguments['file'];
 
     return Scaffold(
       // appBar: AppBar(
@@ -193,7 +194,8 @@ class _PdfScreen extends State<PdfScreen> {
       // ),
       body: SafeArea(
         // TODO: SfPdfViewer can be replaced with SfPdfViewer.memory()
-        child: SfPdfViewer.memory(filedata, controller: _pdfController),
+        child: SfPdfViewer.memory(Uint8List.fromList(base64Decode(filedata)),
+            controller: _pdfController),
         // child: SfPdfViewer.file(filedata, controller: _pdfController),
       ),
     );

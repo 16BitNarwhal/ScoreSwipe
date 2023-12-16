@@ -49,8 +49,8 @@ class _ActionsButtonState extends State<ActionsButton> {
         BlocProvider.of<ScoreBrowserBloc>(context).add(AddScore(score));
       }
     }
-    Logger().i('Added ${file.files.length} scores');
     await Future.wait(futures);
+    Logger().i('Added ${file.files.length} scores');
     if (context.mounted) {
       BlocProvider.of<ScoreBrowserBloc>(context).add(LoadScores());
     }

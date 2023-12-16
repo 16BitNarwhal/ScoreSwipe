@@ -5,6 +5,8 @@ import 'package:pdfplayer/features/score_browser/models/score_model.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart';
 
+import 'package:logger/logger.dart';
+
 class LocalScoreDataSource {
   static late sql.Database db;
 
@@ -13,14 +15,14 @@ class LocalScoreDataSource {
     db = await sql.openDatabase(dbPath, onCreate: (db, version) {
       // TODO: add back in IF NOT EXISTS
       return db.execute(''' 
-        CREATE TABLE scores(
+        CREATE TABLE IF NOT EXISTS scores(
           id TEXT PRIMARY KEY,
           scoreName TEXT NOT NULL,
           isFavorited INTEGER NOT NULL,
           lastOpened INTEGER NOT NULL,
           uploaded INTEGER NOT NULL,
           pdfFile STRING NOT NULL,
-          thumbnailImage STRING NOT NULL
+          thumbnailImage STRING
         )
       ''');
     }, version: 1);
@@ -68,6 +70,8 @@ class LocalScoreDataSource {
 
   static Future<List<ScoreModel>> getAllScores() async {
     final List<Map<String, dynamic>> maps = await db.query('scores');
+
+    Logger().i(maps.length);
 
     return List.generate(maps.length, (i) {
       return ScoreModel.fromMap(maps[i]);
