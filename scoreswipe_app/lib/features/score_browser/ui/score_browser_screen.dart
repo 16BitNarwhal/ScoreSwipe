@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
-import '../../../filemanager.dart'; // TODO: this is a temporary fix
 import 'dart:io';
 
 import '../models/score_model.dart';

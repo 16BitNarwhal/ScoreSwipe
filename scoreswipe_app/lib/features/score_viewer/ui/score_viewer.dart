@@ -193,7 +193,6 @@ class _PdfScreen extends State<PdfScreen> {
       // ],
       // ),
       body: SafeArea(
-        // TODO: SfPdfViewer can be replaced with SfPdfViewer.memory()
         child: SfPdfViewer.memory(Uint8List.fromList(base64Decode(filedata)),
             controller: _pdfController),
         // child: SfPdfViewer.file(filedata, controller: _pdfController),

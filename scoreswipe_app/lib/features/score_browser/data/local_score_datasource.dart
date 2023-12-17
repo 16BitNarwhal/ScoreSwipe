@@ -13,7 +13,6 @@ class LocalScoreDataSource {
   static Future<void> openDatabase() async {
     String dbPath = join(await sql.getDatabasesPath(), 'scores.db');
     db = await sql.openDatabase(dbPath, onCreate: (db, version) {
-      // TODO: add back in IF NOT EXISTS
       return db.execute(''' 
         CREATE TABLE IF NOT EXISTS scores(
           id TEXT PRIMARY KEY,
