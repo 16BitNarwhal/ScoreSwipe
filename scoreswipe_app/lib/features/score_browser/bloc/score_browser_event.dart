@@ -21,10 +21,10 @@ final class AddScore extends ScoreBrowserEvent {
 
 final class AddScoreFromFilePicker extends ScoreBrowserEvent {}
 
-final class RemoveScore extends ScoreBrowserEvent {
+final class DeleteScore extends ScoreBrowserEvent {
   final ScoreModel score;
 
-  const RemoveScore(this.score);
+  const DeleteScore(this.score);
 
   @override
   List<Object> get props => [score];

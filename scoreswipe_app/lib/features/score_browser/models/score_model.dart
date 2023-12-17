@@ -54,12 +54,6 @@ class ScoreModel {
 
   factory ScoreModel.fromMap(Map<String, dynamic> map) {
     try {
-      map.forEach((key, value) {
-        if (key == 'thumbnailImage') {
-          Logger().wtf('thumbnailImage: ${value.runtimeType}');
-          Logger().wtf('thumbnailImage: ${value.toString()}');
-        }
-      });
       return ScoreModel(
         id: map['id'] as String,
         scoreName: map['scoreName'] as String,

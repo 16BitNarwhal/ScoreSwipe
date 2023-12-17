@@ -3,15 +3,16 @@ part of 'score_browser_screen.dart';
 class MusicSheetsView extends StatelessWidget {
   const MusicSheetsView({super.key});
 
-  void refresh() {
-    ScoreBrowserBloc().add(LoadScores());
+  void refresh(context) {
+    BlocProvider.of<ScoreBrowserBloc>(context).add(LoadScores());
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        refresh();
+        // refresh(context);
+        Logger().i('Refreshed');
       },
       child: Container(
         decoration: BoxDecoration(
@@ -56,7 +57,8 @@ class MusicSheetsView extends StatelessWidget {
                   ],
                 ),
                 BlocBuilder<ScoreBrowserBloc, ScoreBrowserState>(
-                  bloc: ScoreBrowserBloc()..add(LoadScores()),
+                  bloc: BlocProvider.of<ScoreBrowserBloc>(context)
+                    ..add(LoadScores()),
                   builder: (context, state) {
                     return state.scores.isEmpty
                         ? const Center(

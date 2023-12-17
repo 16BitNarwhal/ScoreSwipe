@@ -30,11 +30,29 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         try {
           await LocalScoreDataSource.insertScore(event.score);
 
-          emit(const ScoreBrowserLoading());
+          emit(ScoreBrowserLoaded(scores: state.scores + [event.score]));
 
           Logger().i('Added score ${event.score.scoreName}');
         } catch (error) {
           Logger().e('on<AddScore> : $error');
+        }
+      }
+    });
+    on<DeleteScore>((event, emit) async {
+      Logger().wtf('Deleting score ${event.score.id}');
+      Logger().wtf(state);
+      if (state is ScoreBrowserLoaded) {
+        try {
+          await LocalScoreDataSource.deleteScore(event.score.id);
+
+          emit(ScoreBrowserLoaded(
+              scores: state.scores
+                  .where((score) => score.id != event.score.id)
+                  .toList()));
+
+          Logger().i('Deleted score $event.id');
+        } catch (error) {
+          Logger().e('on<DeleteScore> : $error');
         }
       }
     });

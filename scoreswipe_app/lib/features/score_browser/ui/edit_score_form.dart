@@ -113,11 +113,13 @@ class _EditFormState extends State<EditForm> {
                                           Theme.of(context).colorScheme.error)),
                               onPressed: () async {
                                 // TODO: delete score
-                                // await widget.score.deleteScore();
+                                Logger().wtf('Deleting score');
+                                BlocProvider.of<ScoreBrowserBloc>(context)
+                                    .add(DeleteScore(widget.score));
                                 if (context.mounted) {
                                   Navigator.of(context).pop(); // pop alert
                                   Navigator.of(context).pop(); // pop edit form
-                                  widget.refresh();
+                                  // widget.refresh(); // TODO: keep or remove?
                                 }
                               },
                             ),
