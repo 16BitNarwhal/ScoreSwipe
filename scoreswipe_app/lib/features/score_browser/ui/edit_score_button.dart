@@ -2,10 +2,8 @@ part of 'score_browser_screen.dart';
 
 class EditButton extends StatelessWidget {
   final ScoreModel score;
-  final Function refresh;
 
-  const EditButton({Key? key, required this.score, required this.refresh})
-      : super(key: key);
+  const EditButton({Key? key, required this.score}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +15,7 @@ class EditButton extends StatelessWidget {
           showDialog(
             context: context,
             builder: (context) {
-              return Dialog(child: EditForm(score: score, refresh: refresh));
+              return Dialog(child: EditForm(score: score));
             },
           );
         },

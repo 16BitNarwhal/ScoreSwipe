@@ -74,6 +74,32 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         }
       }
     });
+    on<EditScore>((event, emit) async {
+      if (state is ScoreBrowserLoaded) {
+        try {
+          if (event.scoreName != null) event.score.scoreName = event.scoreName!;
+
+          event.score.lastOpened = DateTime.now();
+
+          await LocalScoreDataSource.updateScore(event.score);
+
+          List<ScoreModel> scores = state.scores
+              .where((score) => score.id == event.score.id)
+              .toList();
+          Logger().wtf(scores);
+
+          emit(ScoreBrowserLoaded(
+              scores: state.scores
+                  .map((score) =>
+                      score.id == event.score.id ? event.score : score)
+                  .toList()));
+
+          Logger().wtf('Edited score ${event.score.scoreName}');
+        } catch (error) {
+          Logger().e('on<EditScore> : $error');
+        }
+      }
+    });
     // on<AddScoreFromFilePicker>((event, emit) async {
     //   if (state is ScoreBrowserLoaded) {
     //     try {

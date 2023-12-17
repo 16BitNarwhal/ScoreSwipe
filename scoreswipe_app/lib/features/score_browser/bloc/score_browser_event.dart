@@ -38,3 +38,13 @@ final class ToggleFavorite extends ScoreBrowserEvent {
   @override
   List<Object> get props => [score];
 }
+
+final class EditScore extends ScoreBrowserEvent {
+  final ScoreModel score;
+  final String? scoreName;
+
+  const EditScore(this.score, {this.scoreName});
+
+  @override
+  List<Object> get props => [score];
+}

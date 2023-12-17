@@ -4,11 +4,9 @@ class MusicSheetCard extends StatelessWidget {
   const MusicSheetCard({
     super.key,
     required this.score,
-    required this.refresh,
   });
 
   final ScoreModel score;
-  final Function refresh;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +61,7 @@ class MusicSheetCard extends StatelessWidget {
           ),
         ),
         FavoriteButton(score: score),
-        EditButton(score: score, refresh: refresh),
+        EditButton(score: score),
       ],
     );
   }

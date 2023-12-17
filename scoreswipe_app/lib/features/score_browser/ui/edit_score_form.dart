@@ -2,10 +2,8 @@ part of 'score_browser_screen.dart';
 
 class EditForm extends StatefulWidget {
   final ScoreModel score;
-  final Function refresh;
 
-  EditForm({Key? key, required this.score, required this.refresh})
-      : super(key: key);
+  EditForm({Key? key, required this.score}) : super(key: key);
 
   @override
   State<EditForm> createState() => _EditFormState();
@@ -140,14 +138,12 @@ class _EditFormState extends State<EditForm> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    // TODO: edit score
-                    // widget.score.setTitle(widget._titleController.text);
-                    // widget.score
-                    //     .setGenres(widget._genresController.text.split(","));
-                    // await widget.score.saveMetadata();
+                    // TODO: remove genres from editform
+                    BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(
+                        widget.score,
+                        scoreName: widget._titleController.text));
                     if (context.mounted) {
                       Navigator.pop(context);
-                      widget.refresh();
                     }
                   },
                   child: Text("Save",

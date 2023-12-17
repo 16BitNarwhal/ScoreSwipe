@@ -11,7 +11,7 @@ class MusicSheetsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        // refresh(context);
+        refresh(context);
         Logger().i('Refreshed');
       },
       child: Container(
@@ -76,8 +76,7 @@ class MusicSheetsView extends StatelessWidget {
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: MusicSheetCard(
-                                      score: score, refresh: refresh),
+                                  child: MusicSheetCard(score: score),
                                 ),
                             ],
                           );
