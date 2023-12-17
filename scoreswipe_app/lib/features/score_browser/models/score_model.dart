@@ -9,12 +9,12 @@ import 'dart:convert';
 import 'package:logger/logger.dart';
 
 class ScoreModel {
-  final String id;
-  final String scoreName;
-  final bool isFavorite;
-  final DateTime lastOpened;
-  final DateTime uploaded;
-  final String pdfFile;
+  String id;
+  String scoreName;
+  bool isFavorite;
+  DateTime lastOpened;
+  DateTime uploaded;
+  String pdfFile;
   String? thumbnailImage;
 
   ScoreModel(

@@ -29,3 +29,12 @@ final class DeleteScore extends ScoreBrowserEvent {
   @override
   List<Object> get props => [score];
 }
+
+final class ToggleFavorite extends ScoreBrowserEvent {
+  final ScoreModel score;
+
+  const ToggleFavorite(this.score);
+
+  @override
+  List<Object> get props => [score];
+}

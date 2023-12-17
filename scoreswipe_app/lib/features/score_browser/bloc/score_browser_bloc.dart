@@ -56,6 +56,24 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         }
       }
     });
+    on<ToggleFavorite>((event, emit) async {
+      if (state is ScoreBrowserLoaded) {
+        try {
+          event.score.isFavorite = !event.score.isFavorite;
+          await LocalScoreDataSource.updateScore(event.score);
+
+          emit(ScoreBrowserLoaded(
+              scores: state.scores
+                  .map((score) =>
+                      score.id == event.score.id ? event.score : score)
+                  .toList()));
+
+          Logger().i('Toggled favorite for score ${event.score.id}');
+        } catch (error) {
+          Logger().e('on<ToggleFavorite> : $error');
+        }
+      }
+    });
     // on<AddScoreFromFilePicker>((event, emit) async {
     //   if (state is ScoreBrowserLoaded) {
     //     try {
