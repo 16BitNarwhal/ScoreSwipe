@@ -94,4 +94,27 @@ class ScoreModel {
   String toString() {
     return 'ScoreModel(id: $id, scoreName: $scoreName, isFavorited: $isFavorite, lastOpened: $lastOpened, uploaded: $uploaded)';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ScoreModel &&
+        other.id == id &&
+        other.scoreName == scoreName &&
+        other.isFavorite == isFavorite &&
+        other.lastOpened.difference(lastOpened).inSeconds < 1 &&
+        other.uploaded.difference(uploaded).inSeconds < 1 &&
+        other.pdfFile == pdfFile &&
+        other.thumbnailImage == thumbnailImage;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        scoreName.hashCode ^
+        isFavorite.hashCode ^
+        lastOpened.hashCode ^
+        uploaded.hashCode;
+  }
 }
