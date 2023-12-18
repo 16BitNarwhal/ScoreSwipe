@@ -32,10 +32,11 @@ class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
       body: const SafeArea(
-        child: Stack(
-          children: [
+        child: CustomScrollView(
+          slivers: [
             AppBarView(),
-            MusicSheetsView(),
+            // MusicSheetsView(),
+            SliverToBoxAdapter(child: MusicSheetsView()),
           ],
         ),
       ),
@@ -49,54 +50,56 @@ class AppBarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.secondary,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Make Some',
-                      style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w400,
-                          height: 0.3),
-                    ),
-                    Text(
-                      'Music',
-                      style:
-                          TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {
-                        // Handle search icon tap
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.account_circle),
-                      onPressed: () {
-                        // Handle account icon tap
-                      },
-                    ),
-                  ],
-                ),
-              ],
+    return SliverAppBar(
+      expandedHeight: 300,
+      flexibleSpace: Container(
+        color: Theme.of(context).colorScheme.secondary,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Make Some',
+                        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w400,
+                            height: 0.3),
+                      ),
+                      Text(
+                        'Music',
+                        style: TextStyle(
+                            fontSize: 40, fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: () {
+                          // Handle search icon tap
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.account_circle),
+                        onPressed: () {
+                          // Handle account icon tap
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
