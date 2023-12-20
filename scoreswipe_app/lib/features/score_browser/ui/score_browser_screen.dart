@@ -35,7 +35,19 @@ class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
         child: Stack(
           children: [
             AppBarView(),
-            MusicSheetsView(),
+            CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  expandedHeight: 200,
+                  floating: true,
+                  pinned: false,
+                  snap: false,
+                  flexibleSpace: null,
+                ),
+                SliverToBoxAdapter(child: MusicSheetsView()),
+              ],
+            ),
           ],
         ),
       ),
@@ -51,7 +63,6 @@ class AppBarView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.secondary,
-      height: MediaQuery.of(context).size.height,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
