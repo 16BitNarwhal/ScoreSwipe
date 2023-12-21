@@ -39,8 +39,6 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
       }
     });
     on<DeleteScore>((event, emit) async {
-      Logger().wtf('Deleting score ${event.score.id}');
-      Logger().wtf(state);
       if (state is ScoreBrowserLoaded) {
         try {
           await LocalScoreDataSource.deleteScore(event.score.id);
@@ -86,15 +84,12 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
           List<ScoreModel> scores = state.scores
               .where((score) => score.id == event.score.id)
               .toList();
-          Logger().wtf(scores);
 
           emit(ScoreBrowserLoaded(
               scores: state.scores
                   .map((score) =>
                       score.id == event.score.id ? event.score : score)
                   .toList()));
-
-          Logger().wtf('Edited score ${event.score.scoreName}');
         } catch (error) {
           Logger().e('on<EditScore> : $error');
         }

@@ -49,7 +49,6 @@ class LocalScoreDataSource {
   }
 
   static Future<void> deleteScore(String id) async {
-    Logger().wtf('Deleting score $id');
     await db.delete(
       'scores',
       where: 'id = ?',
