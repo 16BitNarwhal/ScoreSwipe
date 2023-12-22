@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             fontFamily: 'Inter',
           ),
-          initialRoute: '/createscreen',
+          initialRoute: '/mainscreen',
           routes: {
             '/experiment': (context) =>
                 const TestingScreen(), // TODO: DONT PUSH TO PROD

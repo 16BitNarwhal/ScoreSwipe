@@ -6,8 +6,8 @@ import 'dart:io';
 
 import 'package:logger/logger.dart';
 
-import 'package:pdfplayer/features/score_browser/models/score_model.dart';
-import 'package:pdfplayer/features/score_browser/data/local_score_datasource.dart';
+import '../../../common/models/score_model.dart';
+import '../../../common/data/local_score_datasource.dart';
 
 part 'score_browser_event.dart';
 part 'score_browser_state.dart';

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+
+import '../../../common/models/score_model.dart';
+import '../../../common/data/local_score_datasource.dart';
 
 class ScoreCreatorScreen extends StatefulWidget {
   const ScoreCreatorScreen({super.key});
@@ -9,12 +15,10 @@ class ScoreCreatorScreen extends StatefulWidget {
   _ScoreCreatorScreenState createState() => _ScoreCreatorScreenState();
 }
 
-// TODO: delete page button, add page button, "finish" button
-// implement with BLoC?
-
 class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   List<File> images = [];
   int currentPage = 0;
+  String scoreName = '';
 
   Future<void> pickImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -74,6 +78,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
               currentPage: currentPage,
               totalPages: images.length,
             ),
+            // add from camera, add from gallery, import pdf
             ElevatedButton(
               onPressed: pickImages,
               style: ElevatedButton.styleFrom(
@@ -81,6 +86,67 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                 backgroundColor: Colors.blue,
               ),
               child: const Text('Add Images'),
+            ),
+            Container(
+              margin: const EdgeInsets.all(16),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    scoreName = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Score Name',
+                ),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // images to pdf
+                pw.Document pdf = pw.Document();
+                for (File image in images) {
+                  pdf.addPage(pw.Page(
+                    pageFormat: PdfPageFormat.a4,
+                    build: (pw.Context context) {
+                      return pw.Center(
+                        child:
+                            pw.Image(pw.MemoryImage(image.readAsBytesSync())),
+                      ); // Center
+                    },
+                  ));
+                }
+                Directory dir = await getApplicationSupportDirectory();
+                final file = File('${dir.path}/$scoreName.pdf');
+                file.writeAsBytesSync(await pdf.save());
+                ScoreModel score = ScoreModel.fromPdfFile(file);
+                await LocalScoreDataSource.openDatabase();
+                await LocalScoreDataSource.insertScore(score);
+                await LocalScoreDataSource.closeDatabase();
+                file.delete();
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
+              ),
+              child: const Text('Submit'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Cancel'),
             ),
           ],
         ),
