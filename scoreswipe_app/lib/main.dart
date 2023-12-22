@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'features/score_viewer/ui/score_viewer.dart';
 import 'features/score_browser/ui/score_browser_screen.dart';
 import 'features/score_viewer/ui/configscreen.dart';
+import 'features/score_creator/ui/score_creator_screen.dart';
 import 'titlescreen.dart';
 
 import 'experiment.dart';
@@ -46,13 +47,14 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             fontFamily: 'Inter',
           ),
-          initialRoute: '/experiment',
+          initialRoute: '/createscreen',
           routes: {
             '/experiment': (context) =>
                 const TestingScreen(), // TODO: DONT PUSH TO PROD
             '/mainscreen': (context) => const ScoreBrowserScreen(),
             // '/titlescreen': (context) => TitleScreen(title: title),
             '/pdfscreen': (context) => const PdfScreen(),
+            '/createscreen': (context) => const ScoreCreatorScreen(),
             '/configscreen': (context) => const ConfigScreen(),
           }),
     );
