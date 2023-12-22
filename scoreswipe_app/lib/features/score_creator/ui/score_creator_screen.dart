@@ -35,6 +35,10 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
     }
   }
 
+  bool isValid() {
+    return images.isNotEmpty && scoreName.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,6 +111,9 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
+                if (!isValid()) {
+                  return;
+                }
                 // images to pdf
                 pw.Document pdf = pw.Document();
                 for (File image in images) {
@@ -116,7 +123,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                       return pw.Center(
                         child:
                             pw.Image(pw.MemoryImage(image.readAsBytesSync())),
-                      ); // Center
+                      );
                     },
                   ));
                 }
@@ -134,7 +141,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
+                backgroundColor: (isValid() ? Colors.blue : Colors.grey),
               ),
               child: const Text('Submit'),
             ),
