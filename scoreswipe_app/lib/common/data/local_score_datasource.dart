@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:io';
-import 'package:pdfplayer/features/score_browser/models/score_model.dart';
+import '../models/score_model.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart';
 
@@ -49,7 +49,6 @@ class LocalScoreDataSource {
   }
 
   static Future<void> deleteScore(String id) async {
-    Logger().wtf('Deleting score $id');
     await db.delete(
       'scores',
       where: 'id = ?',

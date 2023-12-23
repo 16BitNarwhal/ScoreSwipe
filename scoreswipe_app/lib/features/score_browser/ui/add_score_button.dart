@@ -83,7 +83,7 @@ class _ActionsButtonState extends State<ActionsButton> {
           icon: Icons.photo_library,
           label: 'Upload Photos',
           onTap: () {
-            // TODO: photos feature
+            Navigator.pushNamed(context, '/createscreen');
           },
         ),
         buildSpeedDialChild(

@@ -18,8 +18,7 @@ final class ScoreBrowserLoading extends ScoreBrowserState {
 }
 
 final class ScoreBrowserLoaded extends ScoreBrowserState {
-  const ScoreBrowserLoaded({required List<ScoreModel> scores})
-      : super(scores: scores);
+  const ScoreBrowserLoaded({required super.scores});
 
   @override
   List<Object> get props => [scores];
