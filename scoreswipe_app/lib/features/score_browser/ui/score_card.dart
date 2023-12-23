@@ -39,13 +39,10 @@ class MusicSheetCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  // render thumbnail image if it exists
-                  child: score.thumbnailImage == ""
-                      ? Container()
-                      : Image.memory(
-                          score.getThumbnailImage(),
-                          fit: BoxFit.cover,
-                        ),
+                  child: Image.file(
+                    score.thumbnailImage,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Container(
                   padding:

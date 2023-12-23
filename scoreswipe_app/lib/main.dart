@@ -49,8 +49,8 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: '/mainscreen',
           routes: {
-            '/experiment': (context) =>
-                const TestingScreen(), // TODO: DONT PUSH TO PROD
+            // '/experiment': (context) =>
+            //     const TestingScreen(), // TODO: DONT PUSH TO PROD
             '/mainscreen': (context) => const ScoreBrowserScreen(),
             // '/titlescreen': (context) => TitleScreen(title: title),
             '/pdfscreen': (context) => const PdfScreen(),

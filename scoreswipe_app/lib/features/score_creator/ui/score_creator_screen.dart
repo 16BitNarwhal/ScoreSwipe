@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:path_provider/path_provider.dart';
+import 'package:pdfplayer/common/data/local_score_repository.dart';
 import 'dart:io';
-
-import '../../../common/models/score_model.dart';
-import '../../../common/data/local_score_datasource.dart';
 
 class ScoreCreatorScreen extends StatefulWidget {
   const ScoreCreatorScreen({super.key});
@@ -114,27 +109,10 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                 if (!isValid()) {
                   return;
                 }
-                // images to pdf
-                pw.Document pdf = pw.Document();
-                for (File image in images) {
-                  pdf.addPage(pw.Page(
-                    pageFormat: PdfPageFormat.a4,
-                    build: (pw.Context context) {
-                      return pw.Center(
-                        child:
-                            pw.Image(pw.MemoryImage(image.readAsBytesSync())),
-                      );
-                    },
-                  ));
-                }
-                Directory dir = await getApplicationSupportDirectory();
-                final file = File('${dir.path}/$scoreName.pdf');
-                file.writeAsBytesSync(await pdf.save());
-                ScoreModel score = ScoreModel.fromPdfFile(file);
-                await LocalScoreDataSource.openDatabase();
-                await LocalScoreDataSource.insertScore(score);
-                await LocalScoreDataSource.closeDatabase();
-                file.delete();
+
+                await LocalScoreRepository.insertScoreFromImages(images,
+                    scoreName: scoreName);
+
                 if (context.mounted) {
                   Navigator.pop(context);
                 }

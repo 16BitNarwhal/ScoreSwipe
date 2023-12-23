@@ -30,33 +30,33 @@ class _ActionsButtonState extends State<ActionsButton> {
 
   // TODO: move to a separate class / make it work in the BLoC
   void addFileFromPicker() async {
-    FilePickerResult? file = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-    );
+    // FilePickerResult? file = await FilePicker.platform.pickFiles(
+    //   type: FileType.custom,
+    //   allowedExtensions: ['pdf'],
+    // );
 
-    if (file == null || file.files.isEmpty) {
-      Logger().i('No files selected');
-      return;
-    }
+    // if (file == null || file.files.isEmpty) {
+    //   Logger().i('No files selected');
+    //   return;
+    // }
 
-    List<Future<void>> futures = [];
-    List<ScoreModel> scores = [];
-    for (PlatformFile platformFile in file.files) {
-      final score = ScoreModel.fromPdfFile(File(platformFile.path!));
-      scores.add(score);
-      futures
-          .add(score.createThumbnailImage()); // TODO: move to a separate class
-    }
-    await Future.wait(futures);
-    if (context.mounted) {
-      for (ScoreModel score in scores) {
-        BlocProvider.of<ScoreBrowserBloc>(context).add(AddScore(score));
-      }
-      Logger().i('Added ${file.files.length} scores');
-      Logger().i('Reloading scores');
-      BlocProvider.of<ScoreBrowserBloc>(context).add(LoadScores());
-    }
+    // List<Future<void>> futures = [];
+    // List<ScoreModel> scores = [];
+    // for (PlatformFile platformFile in file.files) {
+    //   final score = ScoreModel.fromPdfFile(File(platformFile.path!));
+    //   scores.add(score);
+    //   futures
+    //       .add(score.createThumbnailImage()); // TODO: move to a separate class
+    // }
+    // await Future.wait(futures);
+    // if (context.mounted) {
+    //   for (ScoreModel score in scores) {
+    //     BlocProvider.of<ScoreBrowserBloc>(context).add(AddScore(score));
+    //   }
+    //   Logger().i('Added ${file.files.length} scores');
+    //   Logger().i('Reloading scores');
+    //   BlocProvider.of<ScoreBrowserBloc>(context).add(LoadScores());
+    // }
   }
 
   @override

@@ -8,9 +8,10 @@ import 'package:path/path.dart';
 import 'package:logger/logger.dart';
 
 class LocalScoreDataSource {
-  static late sql.Database db;
+  static sql.Database? db;
 
   static Future<void> openDatabase() async {
+    if (db != null && db!.isOpen) return;
     String dbPath = join(await sql.getDatabasesPath(), 'scores.db');
     db = await sql.openDatabase(dbPath, onCreate: (db, version) {
       return db.execute(''' 
@@ -21,59 +22,60 @@ class LocalScoreDataSource {
           lastOpened INTEGER NOT NULL,
           uploaded INTEGER NOT NULL,
           pdfFile STRING NOT NULL,
-          thumbnailImage STRING
+          thumbnailImage STRING NOT NULL
         )
       ''');
     }, version: 1);
   }
 
   static Future<void> closeDatabase() async {
-    db.close();
+    if (db != null && db!.isOpen) await db!.close();
   }
 
-  static Future<void> insertScore(ScoreModel score) async {
-    await db.insert(
+  static Future<void> insertScore(Map<String, dynamic> score) async {
+    await openDatabase();
+    await db!.insert(
       'scores',
-      score.toMap(),
+      score,
       conflictAlgorithm: sql.ConflictAlgorithm.replace,
     );
   }
 
-  static Future<void> updateScore(ScoreModel score) async {
-    await db.update(
+  static Future<void> updateScore(Map<String, dynamic> score, String id) async {
+    await openDatabase();
+    await db!.update(
       'scores',
-      score.toMap(),
+      score,
       where: 'id = ?',
-      whereArgs: [score.id],
+      whereArgs: [id],
     );
   }
 
   static Future<void> deleteScore(String id) async {
-    await db.delete(
+    await openDatabase();
+    await db!.delete(
       'scores',
       where: 'id = ?',
       whereArgs: [id],
     );
   }
 
-  static Future<ScoreModel?> getScore(String id) async {
+  static Future<Map<String, dynamic>?> getScore(String id) async {
+    await openDatabase();
     final List<Map<String, dynamic>> maps =
-        await db.query('scores', where: 'id = ?', whereArgs: [id]);
+        await db!.query('scores', where: 'id = ?', whereArgs: [id]);
 
     if (maps.isEmpty) {
       return null;
     }
 
-    return ScoreModel.fromMap(maps.first);
+    return maps.first;
   }
 
-  static Future<List<ScoreModel>> getAllScores() async {
-    final List<Map<String, dynamic>> maps = await db.query('scores');
+  static Future<List<Map<String, dynamic>>> getAllScores() async {
+    await openDatabase();
+    final List<Map<String, dynamic>> maps = await db!.query('scores');
 
-    Logger().i(maps.length);
-
-    return List.generate(maps.length, (i) {
-      return ScoreModel.fromMap(maps[i]);
-    });
+    return maps;
   }
 }
