@@ -5,9 +5,9 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
 import 'package:logger/logger.dart';
+import '../../../common/data/local_score_repository.dart';
 
 import '../../../common/models/score_model.dart';
-import '../../../common/data/local_score_datasource.dart';
 
 part 'score_browser_event.dart';
 part 'score_browser_state.dart';
@@ -16,8 +16,7 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
   ScoreBrowserBloc() : super(const ScoreBrowserLoading()) {
     on<LoadScores>((event, emit) async {
       try {
-        await LocalScoreDataSource.openDatabase();
-        List<ScoreModel> scores = await LocalScoreDataSource.getAllScores();
+        List<ScoreModel> scores = await LocalScoreRepository.getAllScores();
         emit(ScoreBrowserLoaded(scores: scores));
         Logger().i('Finished loading ${scores.length} scores');
       } catch (error) {
@@ -26,22 +25,22 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
       // TODO: move close database to when widget is disposed
     });
     on<AddScore>((event, emit) async {
-      if (state is ScoreBrowserLoaded) {
-        try {
-          await LocalScoreDataSource.insertScore(event.score);
+      // if (state is ScoreBrowserLoaded) {
+      //   try {
+      //     await LocalScoreRepository.insertScore(event.score);
 
-          emit(ScoreBrowserLoaded(scores: state.scores + [event.score]));
+      //     emit(ScoreBrowserLoaded(scores: state.scores + [event.score]));
 
-          Logger().i('Added score ${event.score.scoreName}');
-        } catch (error) {
-          Logger().e('on<AddScore> : $error');
-        }
-      }
+      //     Logger().i('Added score ${event.score.scoreName}');
+      //   } catch (error) {
+      //     Logger().e('on<AddScore> : $error');
+      //   }
+      // }
     });
     on<DeleteScore>((event, emit) async {
       if (state is ScoreBrowserLoaded) {
         try {
-          await LocalScoreDataSource.deleteScore(event.score.id);
+          await LocalScoreRepository.deleteScore(event.score.id);
 
           emit(ScoreBrowserLoaded(
               scores: state.scores
@@ -58,7 +57,7 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
       if (state is ScoreBrowserLoaded) {
         try {
           event.score.isFavorite = !event.score.isFavorite;
-          await LocalScoreDataSource.updateScore(event.score);
+          await LocalScoreRepository.updateScore(event.score);
 
           emit(ScoreBrowserLoaded(
               scores: state.scores
@@ -79,11 +78,7 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
 
           event.score.lastOpened = DateTime.now();
 
-          await LocalScoreDataSource.updateScore(event.score);
-
-          List<ScoreModel> scores = state.scores
-              .where((score) => score.id == event.score.id)
-              .toList();
+          await LocalScoreRepository.updateScore(event.score);
 
           emit(ScoreBrowserLoaded(
               scores: state.scores
