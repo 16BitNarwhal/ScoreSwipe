@@ -6,6 +6,7 @@ import 'package:pdf_render/pdf_render.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
+import 'package:edge_detection/edge_detection.dart';
 
 import 'package:pdfplayer/features/score_browser/bloc/score_browser_bloc.dart';
 
@@ -37,7 +38,19 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   }
 
   Future<void> openCamera() async {
-    //
+    String imagePath = '${dir.path}/camera.jpeg';
+    bool success = await EdgeDetection.detectEdge(
+      imagePath,
+      canUseGallery: true,
+      androidScanTitle: 'Scanning', // use custom localizations for android
+      androidCropTitle: 'Crop',
+      androidCropBlackWhiteTitle: 'Black White',
+      androidCropReset: 'Reset',
+    );
+    if (!success) return;
+    setState(() {
+      images.add(File(imagePath));
+    });
   }
 
   Future<void> pickImages() async {
@@ -46,8 +59,8 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
       allowMultiple: true,
     );
 
-    if (result != null) return;
-    List<File> pickedImages = result!.paths.map((path) => File(path!)).toList();
+    if (result == null) return;
+    List<File> pickedImages = result.paths.map((path) => File(path!)).toList();
     setState(() {
       images.addAll(pickedImages);
     });

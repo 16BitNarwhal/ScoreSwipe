@@ -194,7 +194,7 @@ packages:
     source: hosted
     version: "7.0.0"
   edge_detection:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: edge_detection
       sha256: "515bc8b797382f567fd27f2ac972b804077e616865b071a8f6abb568c6aaac4e"
