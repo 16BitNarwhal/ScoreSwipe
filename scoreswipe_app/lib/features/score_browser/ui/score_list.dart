@@ -74,8 +74,8 @@ class MusicSheetsView extends StatelessWidget {
                             children: [
                               for (ScoreModel score in state.scores)
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
                                   child: MusicSheetCard(score: score),
                                 ),
                             ],

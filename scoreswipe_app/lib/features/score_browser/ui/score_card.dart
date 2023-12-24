@@ -23,9 +23,18 @@ class MusicSheetCard extends StatelessWidget {
             }
           },
           child: Container(
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  blurRadius: 5,
+                  offset: const Offset(0, 5),
+                ),
+              ],
             ),
             foregroundDecoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -34,14 +43,16 @@ class MusicSheetCard extends StatelessWidget {
                 width: 2,
               ),
             ),
-            height: 200,
-            child: Column(
+            height: 240,
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
+                SizedBox(
+                  width: 240,
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(10),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
                     ),
                     child: Image.file(
                       score.thumbnailImage,
@@ -50,20 +61,29 @@ class MusicSheetCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.all(24),
                   child: Text(
                     score.scoreName,
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
-        FavoriteButton(score: score),
-        EditButton(score: score),
+        Positioned(
+            right: 8,
+            bottom: 8,
+            child: Row(
+              children: [
+                FavoriteButton(score: score),
+                EditButton(score: score),
+              ],
+            )),
       ],
     );
   }
