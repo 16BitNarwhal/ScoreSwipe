@@ -11,12 +11,13 @@ sealed class ScoreBrowserEvent extends Equatable {
 final class LoadScores extends ScoreBrowserEvent {}
 
 final class AddScore extends ScoreBrowserEvent {
-  final ScoreModel score;
+  final List<File> images;
+  final String scoreName;
 
-  const AddScore(this.score);
+  const AddScore(this.images, this.scoreName);
 
   @override
-  List<Object> get props => [score];
+  List<Object> get props => [images, scoreName];
 }
 
 final class AddScoreFromFilePicker extends ScoreBrowserEvent {}
