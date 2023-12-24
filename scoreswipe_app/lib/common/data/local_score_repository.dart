@@ -11,7 +11,7 @@ import 'local_score_datasource.dart';
 import 'package:logger/logger.dart';
 
 class LocalScoreRepository {
-  static Future<void> insertScoreFromImages(List<File> images,
+  static Future<ScoreModel> insertScoreFromImages(List<File> images,
       {String? scoreName}) async {
     pw.Document pdf = pw.Document();
     for (File image in images) {
@@ -45,6 +45,8 @@ class LocalScoreRepository {
     );
 
     await LocalScoreDataSource.insertScore(score.toMap());
+
+    return score;
   }
 
   static Future<void> updateScore(ScoreModel score) async {
@@ -87,5 +89,9 @@ class LocalScoreRepository {
       pdfFile: File(map['pdfFile']),
       thumbnailImage: File(map['thumbnailImage']),
     );
+  }
+
+  static void close() {
+    LocalScoreDataSource.closeDatabase();
   }
 }

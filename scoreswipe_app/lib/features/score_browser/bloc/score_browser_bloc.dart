@@ -22,20 +22,21 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
       } catch (error) {
         Logger().e('on<LoadScores> : $error');
       }
-      // TODO: move close database to when widget is disposed
     });
     on<AddScore>((event, emit) async {
-      // if (state is ScoreBrowserLoaded) {
-      //   try {
-      //     await LocalScoreRepository.insertScore(event.score);
+      if (state is ScoreBrowserLoaded) {
+        try {
+          ScoreModel score = await LocalScoreRepository.insertScoreFromImages(
+              event.images,
+              scoreName: event.scoreName);
 
-      //     emit(ScoreBrowserLoaded(scores: state.scores + [event.score]));
+          emit(ScoreBrowserLoaded(scores: state.scores + [score]));
 
-      //     Logger().i('Added score ${event.score.scoreName}');
-      //   } catch (error) {
-      //     Logger().e('on<AddScore> : $error');
-      //   }
-      // }
+          Logger().i('Added score ${score.scoreName}');
+        } catch (error) {
+          Logger().e('on<AddScore> : $error');
+        }
+      }
     });
     on<DeleteScore>((event, emit) async {
       if (state is ScoreBrowserLoaded) {
@@ -156,6 +157,7 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
   @override
   Future<void> close() {
     Logger().i('Closing ScoreBrowserBloc');
+    LocalScoreRepository.close();
     return super.close();
   }
 }

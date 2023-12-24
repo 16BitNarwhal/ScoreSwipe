@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdfplayer/common/data/local_score_repository.dart';
 import 'dart:io';
+
+import 'package:pdfplayer/features/score_browser/bloc/score_browser_bloc.dart';
 
 class ScoreCreatorScreen extends StatefulWidget {
   const ScoreCreatorScreen({super.key});
@@ -110,10 +113,9 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                   return;
                 }
 
-                await LocalScoreRepository.insertScoreFromImages(images,
-                    scoreName: scoreName);
-
                 if (context.mounted) {
+                  BlocProvider.of<ScoreBrowserBloc>(context)
+                      .add(AddScore(images, scoreName));
                   Navigator.pop(context);
                 }
               },
