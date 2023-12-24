@@ -25,6 +25,12 @@ class ScoreBrowserScreen extends StatefulWidget {
 
 class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
   @override
+  void dispose() {
+    super.dispose();
+    BlocProvider.of<ScoreBrowserBloc>(context).close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
