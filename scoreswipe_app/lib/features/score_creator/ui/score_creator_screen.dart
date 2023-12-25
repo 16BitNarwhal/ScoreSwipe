@@ -196,7 +196,9 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                 if (context.mounted) {
                   BlocProvider.of<ScoreBrowserBloc>(context)
                       .add(AddScore(images, scoreName));
+                  // TODO: kind of temporary fix, it's better to use some navigation bloc or callback
                   Navigator.pop(context);
+                  Navigator.pushNamed(context, '/mainscreen');
                 }
               },
               style: ElevatedButton.styleFrom(
