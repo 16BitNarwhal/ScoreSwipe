@@ -36,15 +36,10 @@ class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: const SafeArea(
-        child: Stack(
+        child: Column(
           children: [
             AppBarView(),
-            CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: SizedBox(height: 200)),
-                SliverToBoxAdapter(child: MusicSheetsView()),
-              ],
-            ),
+            Expanded(child: MusicSheetsView()),
           ],
         ),
       ),
@@ -65,61 +60,69 @@ class _AppBarViewState extends State<AppBarView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Row(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Make Some ',
-                    style: TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.w400, height: 0.3),
-                  ),
-                  Text(
-                    'Music',
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-              // const SizedBox(height: 16),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                decoration: BoxDecoration(
-                  color:
-                      Theme.of(context).colorScheme.background.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Row(
+    return SizedBox(
+      height: 220,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.search),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        onChanged: (query) {
-                          BlocProvider.of<ScoreBrowserBloc>(context)
-                              .add(SearchScores(query, "", ""));
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'Search',
-                          border: InputBorder.none,
-                        ),
-                      ),
+                    Text(
+                      'Make Some ',
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w400,
+                          height: 0.3),
+                    ),
+                    Text(
+                      'Music',
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
-              ),
-            ],
+                // const SizedBox(height: 16),
+                Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .background
+                        .withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          onChanged: (query) {
+                            BlocProvider.of<ScoreBrowserBloc>(context)
+                                .add(SearchScores(query, "", ""));
+                          },
+                          decoration: const InputDecoration(
+                            hintText: 'Search',
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
