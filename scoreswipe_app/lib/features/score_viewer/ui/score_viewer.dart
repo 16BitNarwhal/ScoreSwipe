@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:logger/logger.dart';
 import 'configscreen.dart';
-import 'dart:convert';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({Key? key}) : super(key: key);
@@ -94,9 +94,9 @@ class _PdfScreen extends State<PdfScreen> {
         }
       });
 
-      setState(() {}); //To refresh widget
+      setState(() {});
     }).catchError((e) {
-      // print(e);
+      Logger().e(e);
     });
   }
 
@@ -181,17 +181,6 @@ class _PdfScreen extends State<PdfScreen> {
     File file = arguments['file'];
 
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      // actions: [
-      //   IconButton(
-      //     icon: const Icon(Icons.settings),
-      //     onPressed: () {
-      //       pushConfigScreen(context);
-      //     },
-      //   ),
-      // ],
-      // ),
       body: SafeArea(
         child: SfPdfViewer.file(file, controller: _pdfController),
       ),

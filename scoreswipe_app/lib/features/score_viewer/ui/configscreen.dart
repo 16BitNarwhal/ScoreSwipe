@@ -9,28 +9,27 @@ class ConfigScreen extends StatefulWidget {
 }
 
 class Config {
-  static late final SharedPreferences prefs;
+  static SharedPreferences? prefs;
 
   static bool invertDirection = false;
   static bool enableTiltTrack = true;
   static double sensitivity = 50;
 
-  static void loadPrefs() async {
+  static Future<void> loadPrefs({Function? callback}) async {
+    if (prefs != null) return;
     prefs = await SharedPreferences.getInstance();
-    invertDirection = prefs.getBool('invertDirection') ?? false;
-    enableTiltTrack = prefs.getBool('enableTiltTrack') ?? true;
-    sensitivity = prefs.getDouble('sensitivity') ?? 50;
+    enableTiltTrack = prefs!.getBool('enableTiltTrack') ?? enableTiltTrack;
+    invertDirection = prefs!.getBool('invertDirection') ?? invertDirection;
+    sensitivity = prefs!.getDouble('sensitivity') ?? sensitivity;
+    callback?.call();
   }
 }
 
 class _ConfigScreenState extends State<ConfigScreen> {
-  late final SharedPreferences prefs;
-
   @override
   void initState() {
     super.initState();
-    Config.loadPrefs();
-    setState(() {});
+    Config.loadPrefs(callback: () => setState(() {}));
   }
 
   configOption(title, widget) {
@@ -47,8 +46,14 @@ class _ConfigScreenState extends State<ConfigScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Config"),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
+          "Settings",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontSize: 24,
+          ),
+        ),
       ),
       body: Container(
         padding: const EdgeInsets.all(32),
@@ -62,6 +67,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                 onChanged: (bool value) {
                   setState(() {
                     Config.enableTiltTrack = value;
+                    Config.prefs!.setBool('enableTiltTrack', value);
                   });
                 },
               ),
@@ -74,6 +80,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                       onChanged: (bool value) {
                         setState(() {
                           Config.invertDirection = value;
+                          Config.prefs!.setBool('invertDirection', value);
                         });
                       },
                     ),
@@ -91,6 +98,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                       onChanged: (double value) {
                         setState(() {
                           Config.sensitivity = value;
+                          Config.prefs!.setDouble('sensitivity', value);
                         });
                       },
                     ),
