@@ -41,14 +41,7 @@ class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
             AppBarView(),
             CustomScrollView(
               slivers: [
-                SliverAppBar(
-                  backgroundColor: Colors.transparent,
-                  expandedHeight: 200,
-                  floating: true,
-                  pinned: false,
-                  snap: false,
-                  flexibleSpace: null,
-                ),
+                SliverToBoxAdapter(child: SizedBox(height: 200)),
                 SliverToBoxAdapter(child: MusicSheetsView()),
               ],
             ),
@@ -60,8 +53,15 @@ class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
   }
 }
 
-class AppBarView extends StatelessWidget {
-  const AppBarView({super.key});
+class AppBarView extends StatefulWidget {
+  const AppBarView({Key? key}) : super(key: key);
+
+  @override
+  State<AppBarView> createState() => _AppBarViewState();
+}
+
+class _AppBarViewState extends State<AppBarView> {
+  TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -87,16 +87,34 @@ class AppBarView extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  // search bar here
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      // Handle search icon tap
-                    },
-                  ),
-                ],
+              // const SizedBox(height: 16),
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.background.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        onChanged: (query) {
+                          BlocProvider.of<ScoreBrowserBloc>(context)
+                              .add(SearchScores(query, "", ""));
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Search',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

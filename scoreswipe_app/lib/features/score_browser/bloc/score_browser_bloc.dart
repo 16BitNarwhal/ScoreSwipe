@@ -23,6 +23,23 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         Logger().e('on<LoadScores> : $error');
       }
     });
+    on<SearchScores>((event, emit) async {
+      if (state is ScoreBrowserLoaded) {
+        try {
+          List<ScoreModel> scores = await LocalScoreRepository.getAllScores();
+          scores = scores
+              .where((score) => score.scoreName
+                  .toLowerCase()
+                  .contains(event.query.toLowerCase()))
+              .toList();
+          // TODO: sort based on user filters
+          emit(ScoreBrowserLoaded(scores: scores));
+          Logger().i('Finished searching ${scores.length} scores');
+        } catch (error) {
+          Logger().e('on<SearchScores> : $error');
+        }
+      }
+    });
     on<AddScore>((event, emit) async {
       if (state is ScoreBrowserLoaded) {
         try {
