@@ -89,41 +89,6 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         }
       }
     });
-    // on<AddScoreFromFilePicker>((event, emit) async {
-    //   if (state is ScoreBrowserLoaded) {
-    //     try {
-    //       FilePickerResult? result = await FilePicker
-    //           .platform // FilePicker not working in the BLoC
-    //           .pickFiles(
-    //               type: FileType.custom,
-    //               allowedExtensions: ['pdf'],
-    //               allowMultiple: true);
-    //       Logger().wtf(result);
-    //       if (result == null || result.files.isEmpty) {
-    //         Logger().i('No files selected');
-    //         return;
-    //       }
-
-    //       List<ScoreModel> scores = [];
-    //       List<Future<void>> futures = [];
-    //       for (PlatformFile file in result.files) {
-    //         final score = ScoreModel.fromPdfFile(File(file.path!));
-    //         futures.add(
-    //             score.createThumbnailImage()); // TODO: move to a separate class
-    //         scores.add(score);
-    //       }
-    //       await Future.wait(futures);
-    //       futures = [];
-    //       for (ScoreModel score in scores) {
-    //         futures.add(LocalScoreDataSource.insertScore(score));
-    //       }
-    //       await Future.wait(futures);
-    //       emit(const ScoreBrowserLoading());
-    //     } catch (error) {
-    //       Logger().e('on<AddScoreFromFilePicker> : $error');
-    //     }
-    //   }
-    // });
   }
 
   // TODO: change to a single BlocObserver
