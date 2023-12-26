@@ -41,11 +41,10 @@ final class ToggleFavorite extends ScoreBrowserEvent {
 }
 
 final class EditScore extends ScoreBrowserEvent {
-  final ScoreModel score;
-  final String? scoreName;
+  final ScoreModel newScore;
 
-  const EditScore(this.score, {this.scoreName});
+  const EditScore(this.newScore);
 
   @override
-  List<Object> get props => [score];
+  List<Object> get props => [newScore];
 }

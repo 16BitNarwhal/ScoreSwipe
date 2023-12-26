@@ -15,7 +15,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   final String title = 'Score Swipe';
 
@@ -28,35 +28,77 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-          title: title,
-          theme: ThemeData(
-            // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            colorScheme: const ColorScheme(
-              brightness: Brightness.light,
-              primary: Color(0xFF87B7FF),
-              onPrimary: Color(0xFFFFFFFF),
-              secondary: Color(0xFF76C6D1),
-              onSecondary: Color(0xFFFFFFFF),
-              error: Color(0xFFFB8188),
-              onError: Color(0xFFFFFFFF),
-              background: Color(0xFFFFFFFF),
-              onBackground: Color(0xFF000000),
-              surface: Color(0xFF87B7FF),
-              onSurface: Color(0xFFFFFFFF),
-            ),
-            useMaterial3: true,
-            fontFamily: 'Inter',
+        title: title,
+        theme: ThemeData(
+          colorScheme: const ColorScheme(
+            brightness: Brightness.light,
+            primary: Color(0xFFDAF1FA),
+            onPrimary: Color(0xFF17426A),
+            secondary: Color(0xFF72BEE8),
+            onSecondary: Color(0xFFFFFFFF),
+            error: Color(0xFFF8CBCC),
+            onError: Color(0xFF000000),
+            background: Color(0xFFFFFFFF),
+            onBackground: Color(0xFF17426A),
+            surface: Color(0xFFF2F6F9),
+            onSurface: Color(0xFF0F2438),
           ),
-          initialRoute: '/mainscreen',
-          routes: {
-            // '/experiment': (context) =>
-            //     const TestingScreen(), // TODO: DONT PUSH TO PROD
-            '/mainscreen': (context) => const ScoreBrowserScreen(),
-            // '/titlescreen': (context) => TitleScreen(title: title),
-            '/pdfscreen': (context) => const PdfScreen(),
-            '/createscreen': (context) => const ScoreCreatorScreen(),
-            '/configscreen': (context) => const ConfigScreen(),
-          }),
+          useMaterial3: true,
+          fontFamily: 'Inter',
+        ),
+        initialRoute: '/mainscreen',
+        routes: {
+          '/mainscreen': (context) => const Navigation(),
+          '/pdfscreen': (context) => const PdfScreen(),
+        },
+      ),
+    );
+  }
+}
+
+class Navigation extends StatefulWidget {
+  const Navigation({Key? key}) : super(key: key);
+
+  @override
+  State<Navigation> createState() => _NavigationState();
+}
+
+class _NavigationState extends State<Navigation> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    const ScoreBrowserScreen(),
+    const ScoreCreatorScreen(),
+    const ConfigScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Theme.of(context).colorScheme.secondary,
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline_sharp),
+            label: 'Create',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
     );
   }
 }
