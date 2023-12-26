@@ -26,6 +26,8 @@ class Config {
 }
 
 class _ConfigScreenState extends State<ConfigScreen> {
+  final gap = const SizedBox(height: 16);
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +38,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(title),
+        Text(title, style: const TextStyle(fontSize: 18)),
         widget,
       ],
     );
@@ -52,6 +54,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 24,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -72,6 +75,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                 },
               ),
             ),
+            gap,
             (Config.enableTiltTrack
                 ? configOption(
                     'Invert Direction',
@@ -86,6 +90,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                     ),
                   )
                 : Container()),
+            gap,
             (Config.enableTiltTrack
                 ? configOption(
                     'Sensitivity',
