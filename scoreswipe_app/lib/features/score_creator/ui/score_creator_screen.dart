@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:edge_detection/edge_detection.dart';
 
 import 'package:pdfplayer/features/score_browser/bloc/score_browser_bloc.dart';
+import 'action_button.dart';
 
 import 'package:logger/logger.dart';
 
@@ -101,121 +102,124 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.6,
-              color: const Color.fromARGB(255, 231, 238, 243),
-              child: Stack(
-                children: [
-                  PageView.builder(
-                    itemCount: images.length,
-                    controller: PageController(initialPage: currentPage),
-                    onPageChanged: (int page) {
-                      setState(() {
-                        currentPage = page;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return Image.file(images[index]);
-                    },
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        images.removeAt(currentPage);
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.red,
+            Expanded(
+              // height: double.infinity,
+              child: Container(
+                color: const Color.fromARGB(255, 231, 238, 243),
+                child: Stack(
+                  children: [
+                    PageView.builder(
+                      itemCount: images.length,
+                      controller: PageController(initialPage: currentPage),
+                      onPageChanged: (int page) {
+                        setState(() {
+                          currentPage = page;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return Image.file(images[index]);
+                      },
                     ),
-                    child: const Text('Delete Page'),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: Column(
+                children: [
+                  PageIndicator(
+                    currentPage: currentPage,
+                    totalPages: images.length,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ActionButton(
+                          onPressed: openCamera, text: 'Add From Camera'),
+                      ActionButton(onPressed: pickImages, text: 'Add Images'),
+                      ActionButton(onPressed: pickPdf, text: 'Import PDF'),
+                      ActionButton(
+                        onPressed: () {
+                          setState(() {
+                            images.removeAt(currentPage);
+                          });
+                        },
+                        text: 'Delete Current Page',
+                        foregroundColor: Theme.of(context).colorScheme.onError,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(16),
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          scoreName = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'Score Name',
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onError,
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (!isValid()) {
+                            return;
+                          }
+
+                          if (context.mounted) {
+                            BlocProvider.of<ScoreBrowserBloc>(context)
+                                .add(AddScore(images, scoreName));
+                            // TODO: kind of temporary fix, it's better to use some navigation bloc or callback
+                            Navigator.pop(context);
+                            Navigator.pushNamed(context, '/mainscreen');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: (isValid()
+                              ? Theme.of(context).colorScheme.secondary
+                              : Colors.grey),
+                        ),
+                        child: const Text('Submit'),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-            PageIndicator(
-              currentPage: currentPage,
-              totalPages: images.length,
-            ),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: openCamera,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
-                  ),
-                  child: const Text('Add From Camera'),
-                ),
-                ElevatedButton(
-                  onPressed: pickImages,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
-                  ),
-                  child: const Text('Add Images'),
-                ),
-                ElevatedButton(
-                  onPressed: pickPdf,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
-                  ),
-                  child: const Text('Import PDF'),
-                ),
-              ],
-            ),
-            Container(
-              margin: const EdgeInsets.all(16),
-              child: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    scoreName = value;
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Score Name',
-                ),
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (!isValid()) {
-                  return;
-                }
-
-                if (context.mounted) {
-                  BlocProvider.of<ScoreBrowserBloc>(context)
-                      .add(AddScore(images, scoreName));
-                  // TODO: kind of temporary fix, it's better to use some navigation bloc or callback
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/mainscreen');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: (isValid() ? Colors.blue : Colors.grey),
-              ),
-              child: const Text('Submit'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.red,
-              ),
-              child: const Text('Cancel'),
             ),
           ],
         ),
@@ -236,17 +240,22 @@ class PageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        totalPages,
-        (index) => Container(
-          margin: const EdgeInsets.all(4),
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: index == currentPage ? Colors.blue : Colors.grey,
+    return SizedBox(
+      height: 30,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          totalPages,
+          (index) => Container(
+            margin: const EdgeInsets.all(4),
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: index == currentPage
+                  ? Theme.of(context).colorScheme.secondary
+                  : Colors.grey,
+            ),
           ),
         ),
       ),
