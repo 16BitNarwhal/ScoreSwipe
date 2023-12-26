@@ -171,10 +171,9 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                           borderSide: BorderSide(color: Colors.blue),
                         ),
                       ),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
@@ -184,7 +183,8 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/mainscreen', (route) => false);
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor:
@@ -203,9 +203,8 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                           if (context.mounted) {
                             BlocProvider.of<ScoreBrowserBloc>(context)
                                 .add(AddScore(images, scoreName));
-                            // TODO: kind of temporary fix, it's better to use some navigation bloc or callback
-                            Navigator.pop(context);
-                            Navigator.pushNamed(context, '/mainscreen');
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/mainscreen', (route) => false);
                           }
                         },
                         style: ElevatedButton.styleFrom(

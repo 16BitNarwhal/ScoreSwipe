@@ -20,16 +20,15 @@ class MusicSheetsView extends StatelessWidget {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: MediaQuery.of(context).size.height),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 32),
-                Row(
+        child: ConstrainedBox(
+          constraints:
+              BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+          child: CustomScrollView(
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            slivers: [
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+              SliverToBoxAdapter(
+                child: Row(
                   children: [
                     Text(
                       'Scores',
@@ -56,7 +55,9 @@ class MusicSheetsView extends StatelessWidget {
                     ),
                   ],
                 ),
-                BlocBuilder<ScoreBrowserBloc, ScoreBrowserState>(
+              ),
+              SliverToBoxAdapter(
+                child: BlocBuilder<ScoreBrowserBloc, ScoreBrowserState>(
                   bloc: BlocProvider.of<ScoreBrowserBloc>(context)
                     ..add(LoadScores()),
                   builder: (context, state) {
@@ -82,9 +83,9 @@ class MusicSheetsView extends StatelessWidget {
                           );
                   },
                 ),
-                const SizedBox(height: 32),
-              ],
-            ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            ],
           ),
         ),
       ),

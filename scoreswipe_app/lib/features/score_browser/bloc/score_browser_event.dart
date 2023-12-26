@@ -10,6 +10,17 @@ sealed class ScoreBrowserEvent extends Equatable {
 
 final class LoadScores extends ScoreBrowserEvent {}
 
+final class SearchScores extends ScoreBrowserEvent {
+  final String query;
+  final String sortBy;
+  final String sortOrder;
+
+  const SearchScores(this.query, this.sortBy, this.sortOrder);
+
+  @override
+  List<Object> get props => [query, sortBy, sortOrder];
+}
+
 final class AddScore extends ScoreBrowserEvent {
   final List<File> images;
   final String scoreName;
