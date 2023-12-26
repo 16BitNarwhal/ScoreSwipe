@@ -11,6 +11,7 @@ import 'package:logger/logger.dart';
 
 part 'add_score_button.dart';
 part 'edit_score_form.dart';
+part 'score_card_button.dart';
 part 'edit_score_button.dart';
 part 'favorite_button.dart';
 part 'score_list.dart';
