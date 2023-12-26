@@ -75,16 +75,14 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
     on<EditScore>((event, emit) async {
       if (state is ScoreBrowserLoaded) {
         try {
-          if (event.scoreName != null) event.score.scoreName = event.scoreName!;
+          event.newScore.lastOpened = DateTime.now();
 
-          event.score.lastOpened = DateTime.now();
-
-          await LocalScoreRepository.updateScore(event.score);
+          await LocalScoreRepository.updateScore(event.newScore);
 
           emit(ScoreBrowserLoaded(
               scores: state.scores
                   .map((score) =>
-                      score.id == event.score.id ? event.score : score)
+                      score.id == event.newScore.id ? event.newScore : score)
                   .toList()));
         } catch (error) {
           Logger().e('on<EditScore> : $error');
