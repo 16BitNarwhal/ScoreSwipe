@@ -4,5 +4,6 @@
 
 A PDF page-flipping app for musicians
 
-## :bulb: About
-The main objective of this project is to create a hands-free system for musicians to flip the pages their digital sheet music. 
+## ⭐: About
+ScoreSwipe is a unique and innovative application that leverages computer vision technology to simplify the experience of reading sheet music in PDF format. With ScoreSwipe, you can flip through the pages of your digital sheet music effortlessly by simply tilting your head.
+
