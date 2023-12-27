@@ -1,5 +1,5 @@
 <p align="centre">
-  # Scoreswipe
+  <h1>Scoreswipe</h1>
 </p>
   
   A PDF page-flipping app for musicians
