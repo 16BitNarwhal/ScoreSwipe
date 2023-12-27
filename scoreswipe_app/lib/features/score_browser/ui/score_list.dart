@@ -7,6 +7,73 @@ class MusicSheetsView extends StatelessWidget {
     BlocProvider.of<ScoreBrowserBloc>(context).add(LoadScores());
   }
 
+  Widget _sortWidget(BuildContext context) {
+    String sortText = 'Sort by Last Opened';
+
+    SortBy sortBy = BlocProvider.of<ScoreBrowserBloc>(context).state.sortBy;
+    switch (sortBy) {
+      case SortBy.name || SortBy.nameReverse:
+        sortText = 'Sort by Name';
+        break;
+      case SortBy.lastOpened || SortBy.lastOpenedReverse:
+        sortText = 'Sort by Last Opened';
+        break;
+      case SortBy.uploaded || SortBy.uploadedReverse:
+        sortText = 'Sort by Uploaded';
+        break;
+    }
+
+    IconData sortIcon = sortBy.toString().contains('Reverse')
+        ? Icons.arrow_drop_down
+        : Icons.arrow_drop_up;
+
+    return GestureDetector(
+      onTap: () {
+        SortBy sortBy = BlocProvider.of<ScoreBrowserBloc>(context).state.sortBy;
+        switch (sortBy) {
+          case SortBy.name:
+            BlocProvider.of<ScoreBrowserBloc>(context)
+                .add(const SortScores(SortBy.nameReverse));
+            break;
+          case SortBy.nameReverse:
+            BlocProvider.of<ScoreBrowserBloc>(context)
+                .add(const SortScores(SortBy.lastOpened));
+            break;
+          case SortBy.lastOpened:
+            BlocProvider.of<ScoreBrowserBloc>(context)
+                .add(const SortScores(SortBy.lastOpenedReverse));
+            break;
+          case SortBy.lastOpenedReverse:
+            BlocProvider.of<ScoreBrowserBloc>(context)
+                .add(const SortScores(SortBy.uploaded));
+            break;
+          case SortBy.uploaded:
+            BlocProvider.of<ScoreBrowserBloc>(context)
+                .add(const SortScores(SortBy.uploadedReverse));
+            break;
+          case SortBy.uploadedReverse:
+            BlocProvider.of<ScoreBrowserBloc>(context)
+                .add(const SortScores(SortBy.name));
+            break;
+        }
+      },
+      child: Row(
+        children: [
+          Text(
+            sortText,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onBackground,
+                fontWeight: FontWeight.w400),
+          ),
+          const SizedBox(width: 8),
+          Icon(sortIcon,
+              size: 32, color: Theme.of(context).colorScheme.onBackground),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -38,19 +105,9 @@ class MusicSheetsView extends StatelessWidget {
                           fontWeight: FontWeight.w700),
                     ),
                     const Spacer(),
-                    Text(
-                      'Sort Most Recent',
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.onBackground,
-                          fontWeight: FontWeight.w400),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_drop_down,
-                          size: 32,
-                          color: Theme.of(context).colorScheme.onBackground),
-                      onPressed: () {
-                        // Handle sort icon tap
+                    BlocBuilder<ScoreBrowserBloc, ScoreBrowserState>(
+                      builder: (context, state) {
+                        return _sortWidget(context);
                       },
                     ),
                   ],

@@ -12,13 +12,11 @@ final class LoadScores extends ScoreBrowserEvent {}
 
 final class SearchScores extends ScoreBrowserEvent {
   final String query;
-  final String sortBy;
-  final String sortOrder;
 
-  const SearchScores(this.query, this.sortBy, this.sortOrder);
+  const SearchScores(this.query);
 
   @override
-  List<Object> get props => [query, sortBy, sortOrder];
+  List<Object> get props => [query];
 }
 
 final class AddScore extends ScoreBrowserEvent {
@@ -58,4 +56,13 @@ final class EditScore extends ScoreBrowserEvent {
 
   @override
   List<Object> get props => [newScore];
+}
+
+final class SortScores extends ScoreBrowserEvent {
+  final SortBy sortBy;
+
+  const SortScores(this.sortBy);
+
+  @override
+  List<Object> get props => [sortBy];
 }

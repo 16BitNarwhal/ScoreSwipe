@@ -99,7 +99,7 @@ class _AppBarViewState extends State<AppBarView> {
                         child: TextField(
                           onChanged: (query) {
                             BlocProvider.of<ScoreBrowserBloc>(context)
-                                .add(SearchScores(query, "", ""));
+                                .add(SearchScores(query));
                           },
                           decoration: const InputDecoration(
                             hintText: 'Search',

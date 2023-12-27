@@ -13,7 +13,7 @@ part 'score_browser_event.dart';
 part 'score_browser_state.dart';
 
 class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
-  ScoreBrowserBloc() : super(const ScoreBrowserLoading()) {
+  ScoreBrowserBloc() : super(ScoreBrowserLoading()) {
     on<LoadScores>((event, emit) async {
       try {
         List<ScoreModel> scores = await LocalScoreRepository.getAllScores();
@@ -32,7 +32,7 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
                   .toLowerCase()
                   .contains(event.query.toLowerCase()))
               .toList();
-          // TODO: sort based on user filters
+
           emit(ScoreBrowserLoaded(scores: scores));
           Logger().i('Finished searching ${scores.length} scores');
         } catch (error) {
@@ -104,9 +104,17 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         }
       }
     });
+    on<SortScores>((event, emit) async {
+      if (state is ScoreBrowserLoaded) {
+        try {
+          emit(ScoreBrowserLoaded(scores: state.scores, sortBy: event.sortBy));
+        } catch (error) {
+          Logger().e('on<SortScores> : $error');
+        }
+      }
+    });
   }
 
-  // TODO: change to a single BlocObserver
   @override
   void onChange(Change<ScoreBrowserState> change) {
     Logger().i('onChange: $change');
