@@ -108,38 +108,34 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
         child: Column(
           children: [
             Expanded(
-              // height: double.infinity,
               child: Container(
                 color: const Color.fromARGB(255, 231, 238, 243),
-                child: Stack(
-                  children: [
-                    PageView.builder(
-                      itemCount: images.length,
-                      controller: PageController(initialPage: currentPage),
-                      onPageChanged: (int page) {
-                        setState(() {
-                          currentPage = page;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        return Image.file(images[index]);
-                      },
-                    ),
-                  ],
+                child: PageView.builder(
+                  itemCount: images.length,
+                  controller: PageController(initialPage: currentPage),
+                  onPageChanged: (int page) {
+                    setState(() {
+                      currentPage = page;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return Image.file(images[index]);
+                  },
                 ),
               ),
             ),
             Container(
-              padding: const EdgeInsets.all(16),
-              height: MediaQuery.of(context).size.height * 0.4,
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               child: Column(
                 children: [
                   PageIndicator(
                     currentPage: currentPage,
                     totalPages: images.length,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  Wrap(
+                    alignment: WrapAlignment.spaceEvenly,
+                    spacing: 16,
+                    runSpacing: 16,
                     children: [
                       ActionButton(
                           onPressed: openCamera, text: 'Add From Camera'),
@@ -148,6 +144,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                       ActionButton(
                         onPressed: () {
                           setState(() {
+                            if (images.isEmpty) return;
                             images.removeAt(currentPage);
                           });
                         },
@@ -177,9 +174,8 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                       ),
                     ),
                   ),
-                  const Spacer(),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ElevatedButton(
                         onPressed: () {
@@ -239,25 +235,27 @@ class PageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 30,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(
-          totalPages,
-          (index) => Container(
-            margin: const EdgeInsets.all(4),
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: index == currentPage
-                  ? Theme.of(context).colorScheme.secondary
-                  : Colors.grey,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: totalPages == 0
+          ? const Text('Add your first page')
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                totalPages,
+                (index) => Container(
+                  margin: const EdgeInsets.all(4),
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: index == currentPage
+                        ? Theme.of(context).colorScheme.secondary
+                        : Colors.grey,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
