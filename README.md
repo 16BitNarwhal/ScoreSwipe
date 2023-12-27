@@ -2,6 +2,8 @@
   <h1>Scoreswipe</h1>
 </p>
 
+readme_content = f"""# {Scoreswipe}
+
 A PDF page-flipping app for musicians
 
 ## :bulb: About
