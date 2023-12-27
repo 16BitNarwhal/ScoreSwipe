@@ -66,3 +66,10 @@ final class SortScores extends ScoreBrowserEvent {
   @override
   List<Object> get props => [sortBy];
 }
+
+final class ReverseScores extends ScoreBrowserEvent {
+  const ReverseScores();
+
+  @override
+  List<Object> get props => [];
+}

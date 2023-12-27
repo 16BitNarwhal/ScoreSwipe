@@ -113,6 +113,16 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
         }
       }
     });
+    on<ReverseScores>((event, emit) async {
+      if (state is ScoreBrowserLoaded) {
+        try {
+          emit(ScoreBrowserLoaded(
+              scores: state.scores, reverse: !state.reverse));
+        } catch (error) {
+          Logger().e('on<ReverseScores> : $error');
+        }
+      }
+    });
   }
 
   @override
