@@ -108,27 +108,34 @@ class MusicSheetsView extends StatelessWidget {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: BlocBuilder<ScoreBrowserBloc, ScoreBrowserState>(
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                sliver: BlocBuilder<ScoreBrowserBloc, ScoreBrowserState>(
                   bloc: BlocProvider.of<ScoreBrowserBloc>(context)
                     ..add(LoadScores()),
                   builder: (context, state) {
                     return state.scores.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'No scores found',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w700),
+                        ? const SliverToBoxAdapter(
+                            child: Center(
+                              child: Text(
+                                'No scores found',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w700),
+                              ),
                             ),
                           )
-                        : Column(
+                        : SliverGrid.count(
+                            crossAxisCount:
+                                MediaQuery.of(context).size.width ~/ 280,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 0.75,
                             children: [
                               for (ScoreModel score in state.scores)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 16.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: MusicSheetCard(score: score),
                                 ),
                             ],
