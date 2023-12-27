@@ -1,16 +1,43 @@
 part of 'score_browser_bloc.dart';
 
-@immutable
-sealed class ScoreBrowserState {
-  final List<ScoreModel> scores;
+enum SortBy {
+  name,
+  lastOpened,
+  uploaded,
+}
 
-  const ScoreBrowserState({this.scores = const []});
+sealed class ScoreBrowserState {
+  List<ScoreModel> scores;
+  final SortBy sortBy;
+  final bool reverse;
+
+  ScoreBrowserState(
+      {this.scores = const [],
+      this.sortBy = SortBy.lastOpened,
+      this.reverse = false});
 }
 
 final class ScoreBrowserLoading extends ScoreBrowserState {
-  const ScoreBrowserLoading();
+  ScoreBrowserLoading();
 }
 
 final class ScoreBrowserLoaded extends ScoreBrowserState {
-  const ScoreBrowserLoaded({required super.scores});
+  ScoreBrowserLoaded(
+      {required List<ScoreModel> scores, super.sortBy, super.reverse}) {
+    switch (sortBy) {
+      case SortBy.name:
+        scores.sort((a, b) => a.scoreName.compareTo(b.scoreName));
+        break;
+      case SortBy.lastOpened:
+        scores.sort((b, a) => a.lastOpened.compareTo(b.lastOpened));
+        break;
+      case SortBy.uploaded:
+        scores.sort((b, a) => a.uploaded.compareTo(b.uploaded));
+        break;
+    }
+    if (reverse) {
+      scores = scores.reversed.toList();
+    }
+    super.scores = scores;
+  }
 }
