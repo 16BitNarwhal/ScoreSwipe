@@ -92,8 +92,6 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
     on<EditScore>((event, emit) async {
       if (state is ScoreBrowserLoaded) {
         try {
-          event.newScore.lastOpened = DateTime.now();
-
           await LocalScoreRepository.updateScore(event.newScore);
 
           emit(ScoreBrowserLoaded(

@@ -2,8 +2,11 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:pdfplayer/common/data/local_score_repository.dart';
 import 'package:pdfplayer/common/models/score_model.dart';
+import 'package:pdfplayer/features/score_browser/bloc/score_browser_bloc.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:logger/logger.dart';
 import 'configscreen.dart';
@@ -178,6 +181,9 @@ class _PdfScreen extends State<PdfScreen> {
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     ScoreModel score = arguments['score'];
+    score.lastOpened = DateTime.now();
+    LocalScoreRepository.updateScore(score);
+    BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(score));
 
     return Scaffold(
       appBar: AppBar(

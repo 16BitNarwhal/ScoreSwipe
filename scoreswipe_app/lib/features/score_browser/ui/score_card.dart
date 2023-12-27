@@ -18,7 +18,11 @@ class MusicSheetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Logger().i('Building MusicSheetCard for ${score.scoreName}');
+    // convert lastOpened to local time and format it
+    score.lastOpened = score.lastOpened.toLocal();
+    String lastOpened =
+        "Last Opened: ${DateFormat.yMd().add_jm().format(score.lastOpened)}";
+
     return Stack(
       children: [
         Container(
@@ -65,13 +69,27 @@ class MusicSheetCard extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.all(24),
-                child: Text(
-                  score.scoreName,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      score.scoreName,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      lastOpened,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
