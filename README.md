@@ -1,3 +1,2 @@
 # Scoreswipe
-
-A pdf page flipping app!
+  A PDF page-flipping app for musicians
