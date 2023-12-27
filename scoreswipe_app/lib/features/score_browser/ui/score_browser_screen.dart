@@ -9,7 +9,6 @@ import '../bloc/score_browser_bloc.dart';
 
 import 'package:logger/logger.dart';
 
-part 'add_score_button.dart';
 part 'edit_score_form.dart';
 part 'score_card_button.dart';
 part 'edit_score_button.dart';
@@ -37,7 +36,6 @@ class _ScoreBrowserScreenState extends State<ScoreBrowserScreen> {
           ],
         ),
       ),
-      floatingActionButton: const ActionsButton(),
     );
   }
 }
@@ -81,7 +79,6 @@ class _AppBarViewState extends State<AppBarView> {
                     ),
                   ],
                 ),
-                // const SizedBox(height: 16),
                 Container(
                   margin: const EdgeInsets.only(top: 16),
                   padding:

@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:pdfplayer/common/models/score_model.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:logger/logger.dart';
 import 'configscreen.dart';
@@ -18,8 +19,6 @@ class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> cameras;
   late CameraController _cameraController;
   late PdfViewerController _pdfController;
-
-  String debug = "";
 
   bool turningPage = false;
 
@@ -70,8 +69,6 @@ class _PdfScreen extends State<PdfScreen> {
             face.headEulerAngleZ!; // Head is tilted sideways rotZ degrees
 
         final double threshold = (100 - Config.sensitivity) / 100 * 40;
-
-        debug = threshold.toString();
 
         if (rotZ > threshold) {
           if (!turningPage) {
@@ -168,21 +165,32 @@ class _PdfScreen extends State<PdfScreen> {
   }
 
   void pushConfigScreen(BuildContext context) async {
-    await Navigator.pushNamed(context, '/configscreen');
-    Config.loadPrefs();
-    setState(() {
-      debug = Config.sensitivity.toString();
-    });
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ConfigScreen(),
+      ),
+    );
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    File file = arguments['file'];
+    ScoreModel score = arguments['score'];
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(score.scoreName),
+        actions: [
+          IconButton(
+            onPressed: () => pushConfigScreen(context),
+            icon: const Icon(Icons.settings),
+          ),
+        ],
+      ),
       body: SafeArea(
-        child: SfPdfViewer.file(file, controller: _pdfController),
+        child: SfPdfViewer.file(score.pdfFile, controller: _pdfController),
       ),
     );
   }

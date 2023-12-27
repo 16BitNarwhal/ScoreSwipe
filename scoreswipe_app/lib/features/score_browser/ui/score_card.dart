@@ -12,8 +12,7 @@ class MusicSheetCard extends StatelessWidget {
     if (context.mounted) {
       // TODO: open pdf BlocProvider.of<ScoreBrowserBloc>(context).add(OpenPdf(score));
 
-      Navigator.pushNamed(context, '/pdfscreen',
-          arguments: {'file': score.pdfFile});
+      Navigator.pushNamed(context, '/pdfscreen', arguments: {'score': score});
     }
   }
 
