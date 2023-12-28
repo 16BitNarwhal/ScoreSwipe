@@ -10,4 +10,4 @@ ScoreSwipe is a unique and innovative application that leverages computer vision
 
 ## 💡 How to use
 
-![Scoreswipe_Logo png-2](https://github.com/16BitNarwhal/ScoreSwipe/assets/132689272/2a77e24d-60dd-486b-aec9-4265365497b5)
+![Scoreswipe_Logo png-2](https://github.com/16BitNarwhal/ScoreSwipe/assets/132689272/2a77e24d-60dd-486b-aec9-4265365497b5){width=300 height=300}
