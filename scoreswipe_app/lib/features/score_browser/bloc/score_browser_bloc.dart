@@ -1,13 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
-import 'package:logger/logger.dart';
-import '../../../common/data/local_score_repository.dart';
+import 'package:score_swipe/common/data/local_score_repository.dart';
+import 'package:score_swipe/common/models/score_model.dart';
 
-import '../../../common/models/score_model.dart';
+import 'package:logger/logger.dart';
 
 part 'score_browser_event.dart';
 part 'score_browser_state.dart';

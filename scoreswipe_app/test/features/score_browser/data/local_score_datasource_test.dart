@@ -1,7 +1,7 @@
 // import 'package:flutter_test/flutter_test.dart';
 // import 'package:uuid/uuid.dart';
-// import 'package:pdfplayer/features/score_browser/data/local_score_datasource.dart';
-// import 'package:pdfplayer/features/score_browser/models/score_model.dart';
+// import 'package:score_swipe/features/score_browser/data/local_score_datasource.dart';
+// import 'package:score_swipe/features/score_browser/models/score_model.dart';
 // import 'dart:typed_data';
 // import 'dart:io';
 

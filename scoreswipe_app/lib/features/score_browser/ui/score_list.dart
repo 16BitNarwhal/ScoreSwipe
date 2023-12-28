@@ -86,7 +86,6 @@ class MusicSheetsView extends StatelessWidget {
           constraints:
               BoxConstraints(minHeight: MediaQuery.of(context).size.height),
           child: CustomScrollView(
-            // crossAxisAlignment: CrossAxisAlignment.stretch,
             slivers: [
               const SliverToBoxAdapter(child: SizedBox(height: 32)),
               SliverToBoxAdapter(

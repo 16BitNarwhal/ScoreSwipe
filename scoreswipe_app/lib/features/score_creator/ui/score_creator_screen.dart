@@ -8,7 +8,7 @@ import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
 import 'package:edge_detection/edge_detection.dart';
 
-import 'package:pdfplayer/features/score_browser/bloc/score_browser_bloc.dart';
+import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
 import 'action_button.dart';
 
 import 'package:logger/logger.dart';

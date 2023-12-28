@@ -5,7 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:uuid/uuid.dart';
 
-import '../models/score_model.dart';
+import 'package:score_swipe/common/models/score_model.dart';
 import 'local_score_datasource.dart';
 
 import 'package:logger/logger.dart';

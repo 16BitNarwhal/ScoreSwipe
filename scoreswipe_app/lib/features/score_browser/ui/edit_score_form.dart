@@ -160,7 +160,6 @@ class _EditFormState extends State<EditForm> {
             Container(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Row(
-                // cancel and save buttons
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(

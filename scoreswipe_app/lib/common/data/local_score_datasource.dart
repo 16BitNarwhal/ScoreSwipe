@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
-import 'dart:io';
-import '../models/score_model.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart';
 

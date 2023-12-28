@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:io';
 import 'package:intl/intl.dart';
 
-import '../../../common/models/score_model.dart';
-import '../bloc/score_browser_bloc.dart';
+import 'package:score_swipe/common/models/score_model.dart';
+import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
 
 import 'package:logger/logger.dart';
 
@@ -64,7 +61,6 @@ class _AppBarViewState extends State<AppBarView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Row(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Make Some ',

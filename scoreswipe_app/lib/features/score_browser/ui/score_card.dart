@@ -10,15 +10,12 @@ class MusicSheetCard extends StatelessWidget {
 
   void _openPdf(BuildContext context) {
     if (context.mounted) {
-      // TODO: open pdf BlocProvider.of<ScoreBrowserBloc>(context).add(OpenPdf(score));
-
       Navigator.pushNamed(context, '/pdfscreen', arguments: {'score': score});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // convert lastOpened to local time and format it
     score.lastOpened = score.lastOpened.toLocal();
     String lastOpened =
         "Last Opened: ${DateFormat.yMd().add_jm().format(score.lastOpened)}";
