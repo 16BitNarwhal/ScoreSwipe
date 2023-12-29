@@ -53,8 +53,8 @@ class ScoreModel {
         other.isFavorite == isFavorite &&
         other.lastOpened.difference(lastOpened).inSeconds < 1 &&
         other.uploaded.difference(uploaded).inSeconds < 1 &&
-        other.pdfFile == pdfFile &&
-        other.thumbnailImage == thumbnailImage;
+        other.pdfFile.path == pdfFile.path &&
+        other.thumbnailImage.path == thumbnailImage.path;
   }
 
   @override
