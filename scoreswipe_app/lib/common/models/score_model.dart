@@ -38,6 +38,26 @@ class ScoreModel {
     };
   }
 
+  ScoreModel copyWith({
+    String? id,
+    String? scoreName,
+    bool? isFavorite,
+    DateTime? lastOpened,
+    DateTime? uploaded,
+    File? pdfFile,
+    File? thumbnailImage,
+  }) {
+    return ScoreModel(
+      id: id ?? this.id,
+      scoreName: scoreName ?? this.scoreName,
+      isFavorite: isFavorite ?? this.isFavorite,
+      lastOpened: lastOpened ?? this.lastOpened,
+      uploaded: uploaded ?? this.uploaded,
+      pdfFile: pdfFile ?? this.pdfFile,
+      thumbnailImage: thumbnailImage ?? this.thumbnailImage,
+    );
+  }
+
   @override
   String toString() {
     return 'ScoreModel(id: $id, scoreName: $scoreName, isFavorited: $isFavorite, lastOpened: $lastOpened, uploaded: $uploaded)';
@@ -53,8 +73,8 @@ class ScoreModel {
         other.isFavorite == isFavorite &&
         other.lastOpened.difference(lastOpened).inSeconds < 1 &&
         other.uploaded.difference(uploaded).inSeconds < 1 &&
-        other.pdfFile == pdfFile &&
-        other.thumbnailImage == thumbnailImage;
+        other.pdfFile.path == pdfFile.path &&
+        other.thumbnailImage.path == thumbnailImage.path;
   }
 
   @override
