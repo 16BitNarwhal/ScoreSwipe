@@ -34,6 +34,10 @@ class LocalScoreRepository {
     File thumbnail = File('${dir.path}/$scoreName.png');
     await images.first.copy(thumbnail.path);
 
+    // check if exists
+    thumbnail.exists().then((value) => Logger().i(value));
+    Logger().wtf(thumbnail.path);
+
     ScoreModel score = ScoreModel(
       id: const Uuid().v4(),
       scoreName: scoreName!,

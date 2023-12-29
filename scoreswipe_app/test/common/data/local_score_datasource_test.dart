@@ -3,13 +3,15 @@ import 'package:score_swipe/common/data/local_score_datasource.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 /// Initialize sqflite for test.
-void sqfliteTestInit() {
+Future<void> sqfliteTestInit() async {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
+  String path = await databaseFactoryFfi.getDatabasesPath();
+  await databaseFactoryFfi.deleteDatabase('$path/scores.db');
 }
 
-void main() {
-  sqfliteTestInit();
+void main() async {
+  await sqfliteTestInit();
 
   group('LocalScoreDataSource', () {
     List<Map<String, dynamic>> scores = [];
