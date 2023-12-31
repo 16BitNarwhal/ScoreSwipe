@@ -10,7 +10,25 @@
 
 A mobile application designed for effortless, hands-free navigation through digital music sheets.
 
-## ⭐ About
+# Table of Contents
+
+- [ScoreSwipe](#scoreswipe)
+- [Table of Contents](#table-of-contents)
+- [⭐ About](#-about)
+  - [🌱 Features](#-features)
+  - [📱 Screenshots](#-screenshots)
+- [💻 For Developers](#-for-developers)
+  - [🛠️ Setup](#️-setup)
+  - [📐 Project Structure](#-project-structure)
+  - [🖼️ Presentation](#️-presentation)
+  - [📱 Business logic](#-business-logic)
+  - [📝 Models](#-models)
+  - [📦 Data](#-data)
+  - [🧪 Testing](#-testing)
+- [Extra](#extra)
+  - [🙏 Acknowledgements](#-acknowledgements)
+
+# ⭐ About
 
 ScoreSwipe is a unique and innovative application that leverages computer vision technology to simplify the experience of reading sheet music. With ScoreSwipe, you can flip through the pages of your digital sheet music effortlessly by simply tilting your head.
 
@@ -29,9 +47,20 @@ ScoreSwipe is a unique and innovative application that leverages computer vision
   <img src="https://github.com/16BitNarwhal/ScoreSwipe/assets/31218485/a44cc3fa-d90b-4f7d-a628-d58d414242ff" width="24%">
 </p>
 
-# For Developers
+# 💻 For Developers
 
-## Project Structure
+The application is entirely built using [Flutter](https://flutter.dev/), a cross-platform UI toolkit for building applications for mobile, web, and desktop from a single codebase. Flutter uses the [Dart](https://dart.dev/) programming language.
+
+## 🛠️ Setup
+
+1. Install [Flutter](https://flutter.dev/docs/get-started/install)
+2. Clone the repository
+3. Run `flutter pub get` to install dependencies
+4. Run `flutter run` to run the app
+5. Run `flutter test` to run the tests
+6. Run `flutter build apk` to build the apk
+
+## 📐 Project Structure
 
 Important files and directories:
 
@@ -53,3 +82,31 @@ Important files and directories:
 └── README.md # This file
 
 ```
+
+## 🖼️ Presentation
+
+The **user interface** is in `lib/features`. Each feature is contained in its own directory and consists of screen(s) and/or widgets. The UI layer is responsible for communicating with the business logic layer.
+
+_note: not all the logic and UI is completely separated_
+
+## 📱 Business logic
+
+The **business logic** is also contained in `lib/features`. When state management becomes complex, we switch to blocs (using the [Business Logic Component pattern](https://bloclibrary.dev/)). Complex features consist of a `bloc` and `event` and `state` classes. The `bloc` class contains the business logic and the `event` and `state` classes are used to communicate with the `bloc`. The `bloc` class is also responsible for communicating with the data layer through the repositories.
+
+## 📝 Models
+
+**Models** are in `lib/common/models`. This folder contains the data models used throughout the app. Currently there is only one model, `Score`, which represents a score.
+
+## 📦 Data
+
+**Data** is handled in `lib/common/data`. This folder contains the logic for fetching and storing data. The repositories are responsible for communicating with the data sources. The data sources are responsible for fetching and storing data from the respective sources: local database with the Flutter SQLite plugin [sqflite](https://pub.dev/packages/sqflite) and local filestorage with `dart:io` and [path_provider](https://pub.dev/packages/path_provider).
+
+## 🧪 Testing
+
+**Tests** are in `test`. Currently, there are only unit tests that test the models and datasources. The tests are run using the [Flutter test](https://flutter.dev/docs/testing) framework.
+
+# Extra
+
+## 🙏 Acknowledgements
+
+[@floofysaur](https://www.github.com/floofysaur) - User Interface and Logo Design
