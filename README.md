@@ -8,7 +8,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/16bitnarwhal/scoreswipe)
 ![GitHub last commit](https://img.shields.io/github/last-commit/16bitnarwhal/scoreswipe)
 
-A mobile application designed for effortless, hands-free navigation through digital music sheets.
+Ever wanted to play a piece of music but you don't have enough hands to turn the page? Look no further! With **ScoreSwipe**, you can flip through the pages of your digital sheet music effortlessly by ~~using your mind~~ simply tilting your head.
 
 # Table of Contents
 
