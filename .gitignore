@@ -44,3 +44,11 @@ app.*.map.json
 /android/app/release
 
 .env
+
+# Build folders
+android/
+ios/
+windows/
+macos/
+linux/
+web/
