@@ -52,7 +52,7 @@ class _PdfScreen extends State<PdfScreen> {
       }
 
       _cameraController.startImageStream((CameraImage availableImage) async {
-        if (!Config.enableTiltTrack) return;
+        if (Config.swipeAction == SwipeAction.none) return;
 
         InputImage? inputImage = inputImageFromCameraImage(availableImage);
         if (inputImage == null) return;
@@ -68,12 +68,17 @@ class _PdfScreen extends State<PdfScreen> {
                 : next);
 
         if (face.headEulerAngleZ == null) return;
-        final double rotZ =
-            face.headEulerAngleZ!; // Head is tilted sideways rotZ degrees
+        final double rot;
+
+        if (Config.swipeAction == SwipeAction.lookLeftRight) {
+          rot = face.headEulerAngleY!; // look left/right
+        } else {
+          rot = face.headEulerAngleZ!; // tilt
+        }
 
         final double threshold = (100 - Config.sensitivity) / 100 * 40;
 
-        if (rotZ > threshold) {
+        if (rot > threshold) {
           if (!turningPage) {
             (Config.invertDirection)
                 ? _pdfController.previousPage()
@@ -81,7 +86,7 @@ class _PdfScreen extends State<PdfScreen> {
             turningPage = true;
             setState(() {});
           }
-        } else if (rotZ < -threshold) {
+        } else if (rot < -threshold) {
           if (!turningPage) {
             (Config.invertDirection)
                 ? _pdfController.nextPage()
@@ -89,7 +94,7 @@ class _PdfScreen extends State<PdfScreen> {
             turningPage = true;
             setState(() {});
           }
-        } else if (rotZ.abs() < threshold * 0.6 && turningPage) {
+        } else if (rot.abs() < threshold * 0.6 && turningPage) {
           turningPage = false; // or use a timer/delay?
         }
       });

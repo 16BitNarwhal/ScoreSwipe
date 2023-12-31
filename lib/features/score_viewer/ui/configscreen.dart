@@ -8,18 +8,23 @@ class ConfigScreen extends StatefulWidget {
   State<ConfigScreen> createState() => _ConfigScreenState();
 }
 
+enum SwipeAction {
+  none,
+  tiltLeftRight,
+  lookLeftRight,
+}
+
 class Config {
   static SharedPreferences? prefs;
 
+  static SwipeAction swipeAction = SwipeAction.tiltLeftRight;
   static bool invertDirection = false;
-  static bool enableTiltTrack = true;
   static double sensitivity = 50;
 
   static Future<void> loadPrefs({Function? callback}) async {
     if (prefs != null) return;
     prefs = await SharedPreferences.getInstance();
-    enableTiltTrack = prefs!.getBool('enableTiltTrack') ?? enableTiltTrack;
-    invertDirection = prefs!.getBool('invertDirection') ?? invertDirection;
+    swipeAction = SwipeAction.values[prefs!.getInt('swipeAction') ?? 0];
     sensitivity = prefs!.getDouble('sensitivity') ?? sensitivity;
     callback?.call();
   }
@@ -64,19 +69,40 @@ class _ConfigScreenState extends State<ConfigScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             configOption(
-              'Tilt Tracking',
-              Switch(
-                value: Config.enableTiltTrack,
-                onChanged: (bool value) {
-                  setState(() {
-                    Config.enableTiltTrack = value;
-                    Config.prefs!.setBool('enableTiltTrack', value);
-                  });
-                },
+              'Swipe Action',
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 3, color: Theme.of(context).colorScheme.primary),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: DropdownButton<SwipeAction>(
+                  value: Config.swipeAction,
+                  onChanged: (SwipeAction? newValue) {
+                    setState(() {
+                      Config.swipeAction = newValue!;
+                      Config.prefs!.setInt('swipeAction', newValue.index);
+                    });
+                  },
+                  items: SwipeAction.values.map<DropdownMenuItem<SwipeAction>>(
+                    (SwipeAction value) {
+                      return DropdownMenuItem<SwipeAction>(
+                        value: value,
+                        child: Text(
+                          value.toString().split('.').last,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      );
+                    },
+                  ).toList(),
+                  icon: Container(),
+                  underline: Container(),
+                ),
               ),
             ),
             gap,
-            (Config.enableTiltTrack
+            (Config.swipeAction != SwipeAction.none
                 ? configOption(
                     'Invert Direction',
                     Switch(
@@ -91,7 +117,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   )
                 : Container()),
             gap,
-            (Config.enableTiltTrack
+            (Config.swipeAction != SwipeAction.none
                 ? configOption(
                     'Sensitivity',
                     Slider(
