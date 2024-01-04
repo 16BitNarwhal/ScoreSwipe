@@ -29,8 +29,10 @@ class Config {
   static Future<void> loadPrefs({Function? callback}) async {
     if (prefs != null) return;
     prefs = await SharedPreferences.getInstance();
-    swipeAction = SwipeAction.values[prefs!.getInt('swipeAction') ?? 0];
+    swipeAction =
+        SwipeAction.values[prefs!.getInt('swipeAction') ?? swipeAction.index];
     sensitivity = prefs!.getDouble('sensitivity') ?? sensitivity;
+    finishedShowcase = prefs!.getBool('finishedShowcase') ?? finishedShowcase;
     callback?.call();
   }
 }

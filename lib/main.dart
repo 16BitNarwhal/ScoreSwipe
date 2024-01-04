@@ -8,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/score_browser/bloc/score_browser_bloc.dart';
 import 'features/showcase/showcase_bloc.dart';
 
+import 'package:logger/logger.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -77,19 +79,25 @@ class _NavigationState extends State<Navigation> {
   ];
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    await Config.loadPrefs();
-    if (!Config.finishedShowcase) {
-      Config.finishedShowcase = true;
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase(
+    Config.loadPrefs(
+      callback: () => {
+        if (!Config.finishedShowcase)
+          {
+            Config.finishedShowcase = true,
+            Config.prefs!.setBool('finishedShowcase', true),
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => ShowCaseWidget.of(context).startShowCase(
                 List.generate(
                   context.read<ShowcaseBloc>().keys.length,
                   (index) => context.read<ShowcaseBloc>().keys[index],
                 ),
-              ));
-    }
+              ),
+            )
+          }
+      },
+    );
   }
 
   @override
