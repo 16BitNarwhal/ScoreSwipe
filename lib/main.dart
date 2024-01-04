@@ -77,15 +77,19 @@ class _NavigationState extends State<Navigation> {
   ];
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase(
-              List.generate(
-                context.read<ShowcaseBloc>().keys.length,
-                (index) => context.read<ShowcaseBloc>().keys[index],
-              ),
-            ));
+    await Config.loadPrefs();
+    if (!Config.finishedShowcase) {
+      Config.finishedShowcase = true;
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase(
+                List.generate(
+                  context.read<ShowcaseBloc>().keys.length,
+                  (index) => context.read<ShowcaseBloc>().keys[index],
+                ),
+              ));
+    }
   }
 
   @override

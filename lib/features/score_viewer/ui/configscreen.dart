@@ -24,6 +24,8 @@ class Config {
   static bool invertDirection = false;
   static double sensitivity = 50;
 
+  static bool finishedShowcase = false;
+
   static Future<void> loadPrefs({Function? callback}) async {
     if (prefs != null) return;
     prefs = await SharedPreferences.getInstance();
