@@ -105,6 +105,9 @@ The **business logic** is also contained in `lib/features`. When state managemen
 
 **Tests** are in `test`. Currently, there are only unit tests that test the models and datasources. The tests are run using the [Flutter test](https://flutter.dev/docs/testing) framework.
 
+## 🙂 Facial Gesture Tracking
+The gesture tracking leverages ML Kit's face detection API for precise landmarking and rotational information. When the user's head rotation surpasses a predefined threshold, the app flips to the next page. The app waits for the user's head to return below the threshold to reset the process.
+
 # Extra
 
 ## 🙏 Acknowledgements
