@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
 import 'package:edge_detection/edge_detection.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
 import 'action_button.dart';
@@ -39,7 +40,8 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   }
 
   Future<void> openCamera() async {
-    String imagePath = '${dir.path}/camera.jpeg';
+    String uuid = const Uuid().v4();
+    String imagePath = '${dir.path}/$uuid.jpeg';
     bool success = await EdgeDetection.detectEdge(
       imagePath,
       canUseGallery: true,
@@ -85,7 +87,8 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
       ui.Image image = await pdfImage.createImageDetached();
       ByteData? imgBytes =
           await image.toByteData(format: ui.ImageByteFormat.png);
-      File imageFile = File('${dir.path}/$i.png');
+      String uuid = const Uuid().v4();
+      File imageFile = File('${dir.path}/$uuid}.png');
       await imageFile.writeAsBytes(imgBytes!.buffer.asUint8List());
       pickedImages.add(imageFile);
     }
