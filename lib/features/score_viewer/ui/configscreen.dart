@@ -13,14 +13,14 @@ class ConfigScreen extends StatefulWidget {
 
 enum SwipeAction {
   none,
-  tiltLeftRight,
-  lookLeftRight,
+  tilt,
+  turn,
 }
 
 class Config {
   static SharedPreferences? prefs;
 
-  static SwipeAction swipeAction = SwipeAction.tiltLeftRight;
+  static SwipeAction swipeAction = SwipeAction.tilt;
   static bool invertDirection = false;
   static double sensitivity = 50;
 
@@ -101,7 +101,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                         return DropdownMenuItem<SwipeAction>(
                           value: value,
                           child: Text(
-                            value.toString().split('.').last,
+                            '${value.toString().split('.').last[0].toUpperCase()}${value.toString().split('.').last.substring(1)}',
                             style: const TextStyle(fontSize: 18),
                           ),
                         );
