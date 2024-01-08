@@ -58,23 +58,38 @@ class _AppBarViewState extends State<AppBarView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+            margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 36),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Text(
+                    const Text(
                       'Make Some ',
                       style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w400,
                           height: 0.3),
                     ),
-                    Text(
+                    const Text(
                       'Music',
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.help_outline,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      iconSize: 24,
+                      onPressed: () {
+                        ShowCaseWidget.of(context).startShowCase(
+                          List.generate(
+                            context.read<ShowcaseBloc>().keys.length,
+                            (index) => context.read<ShowcaseBloc>().keys[index],
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
