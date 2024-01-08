@@ -10,8 +10,6 @@ import 'package:edge_detection/edge_detection.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
-import 'package:score_swipe/features/showcase/showcase_bloc.dart';
-import 'package:showcaseview/showcaseview.dart';
 import 'action_button.dart';
 
 import 'package:logger/logger.dart';
@@ -137,55 +135,45 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                     currentPage: currentPage,
                     totalPages: images.length,
                   ),
-                  Showcase(
-                    key: context.read<ShowcaseBloc>().keys[3],
-                    description:
-                        'Add pages to your score with any of the following methods',
-                    child: Wrap(
-                      alignment: WrapAlignment.spaceEvenly,
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: [
-                        ActionButton(
-                            onPressed: openCamera, text: 'Add From Camera'),
-                        ActionButton(onPressed: pickImages, text: 'Add Images'),
-                        ActionButton(onPressed: pickPdf, text: 'Import PDF'),
-                        ActionButton(
-                          onPressed: () {
-                            setState(() {
-                              if (images.isEmpty) return;
-                              images.removeAt(currentPage);
-                            });
-                          },
-                          text: 'Delete Current Page',
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onError,
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Showcase(
-                    key: context.read<ShowcaseBloc>().keys[4],
-                    description: 'Give your score a name',
-                    child: Container(
-                      margin: const EdgeInsets.all(16),
-                      child: TextField(
-                        onChanged: (value) {
+                  Wrap(
+                    alignment: WrapAlignment.spaceEvenly,
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: [
+                      ActionButton(
+                          onPressed: openCamera, text: 'Add From Camera'),
+                      ActionButton(onPressed: pickImages, text: 'Add Images'),
+                      ActionButton(onPressed: pickPdf, text: 'Import PDF'),
+                      ActionButton(
+                        onPressed: () {
                           setState(() {
-                            scoreName = value;
+                            if (images.isEmpty) return;
+                            images.removeAt(currentPage);
                           });
                         },
-                        decoration: const InputDecoration(
-                          hintText: 'Score Name',
-                          border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
+                        text: 'Delete Current Page',
+                        foregroundColor: Theme.of(context).colorScheme.onError,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(16),
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          scoreName = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'Score Name',
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue),
                         ),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -205,31 +193,26 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                         child: const Text('Cancel'),
                       ),
                       const SizedBox(width: 16),
-                      Showcase(
-                        key: context.read<ShowcaseBloc>().keys[5],
-                        description:
-                            'Once you\'re finished, submit your score! It will show up in the Score Browser',
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (!isValid()) {
-                              return;
-                            }
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (!isValid()) {
+                            return;
+                          }
 
-                            if (context.mounted) {
-                              BlocProvider.of<ScoreBrowserBloc>(context)
-                                  .add(AddScore(images, scoreName));
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/mainscreen', (route) => false);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: (isValid()
-                                ? Theme.of(context).colorScheme.secondary
-                                : Colors.grey),
-                          ),
-                          child: const Text('Submit'),
+                          if (context.mounted) {
+                            BlocProvider.of<ScoreBrowserBloc>(context)
+                                .add(AddScore(images, scoreName));
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/mainscreen', (route) => false);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: (isValid()
+                              ? Theme.of(context).colorScheme.secondary
+                              : Colors.grey),
                         ),
+                        child: const Text('Submit'),
                       ),
                     ],
                   ),

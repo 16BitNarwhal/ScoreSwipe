@@ -6,8 +6,6 @@ import 'package:score_swipe/common/models/score_model.dart';
 import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
 
 import 'package:logger/logger.dart';
-import 'package:score_swipe/features/showcase/showcase_bloc.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 part 'edit_score_form.dart';
 part 'score_card_button.dart';
@@ -78,38 +76,34 @@ class _AppBarViewState extends State<AppBarView> {
                     ),
                   ],
                 ),
-                Showcase(
-                  key: context.read<ShowcaseBloc>().keys[0],
-                  description: 'Search for scores',
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 16),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .background
-                          .withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.search),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            onChanged: (query) {
-                              BlocProvider.of<ScoreBrowserBloc>(context)
-                                  .add(SearchScores(query));
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Search',
-                              border: InputBorder.none,
-                            ),
+                Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .background
+                        .withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          onChanged: (query) {
+                            BlocProvider.of<ScoreBrowserBloc>(context)
+                                .add(SearchScores(query));
+                          },
+                          decoration: const InputDecoration(
+                            hintText: 'Search',
+                            border: InputBorder.none,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],

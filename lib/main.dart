@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:showcaseview/showcaseview.dart';
 import 'features/score_viewer/ui/score_viewer.dart';
 import 'features/score_browser/ui/score_browser_screen.dart';
 import 'features/score_viewer/ui/configscreen.dart';
 import 'features/score_creator/ui/score_creator_screen.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/score_browser/bloc/score_browser_bloc.dart';
-import 'features/showcase/showcase_bloc.dart';
-
-import 'package:logger/logger.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,9 +22,6 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<ScoreBrowserBloc>(
           create: (context) => ScoreBrowserBloc(),
-        ),
-        BlocProvider<ShowcaseBloc>(
-          create: (context) => ShowcaseBloc(),
         ),
       ],
       child: MaterialApp(
@@ -51,10 +45,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/mainscreen',
         routes: {
-          '/mainscreen': (context) => ShowCaseWidget(
-                builder: Builder(builder: (_) => const Navigation()),
-                autoPlay: false,
-              ),
+          '/mainscreen': (context) => const Navigation(),
           '/pdfscreen': (context) => const PdfScreen(),
         },
       ),
@@ -79,28 +70,6 @@ class _NavigationState extends State<Navigation> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    Config.loadPrefs(
-      callback: () => {
-        if (!Config.finishedShowcase)
-          {
-            Config.finishedShowcase = true,
-            Config.prefs!.setBool('finishedShowcase', true),
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) => ShowCaseWidget.of(context).startShowCase(
-                List.generate(
-                  context.read<ShowcaseBloc>().keys.length,
-                  (index) => context.read<ShowcaseBloc>().keys[index],
-                ),
-              ),
-            )
-          }
-      },
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
@@ -112,24 +81,17 @@ class _NavigationState extends State<Navigation> {
             _currentIndex = index;
           });
         },
-        items: [
-          const BottomNavigationBarItem(
+        items: const [
+          BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Showcase(
-              key: context.read<ShowcaseBloc>().keys[2],
-              description: 'Let\'s create a score!',
-              child: const Icon(Icons.add_circle_outline_sharp),
-            ),
+            icon: Icon(Icons.add_circle_outline_sharp),
             label: 'Create',
           ),
           BottomNavigationBarItem(
-            icon: Showcase(
-                key: context.read<ShowcaseBloc>().keys[6],
-                description: 'Configure how you want to swipe your scores here',
-                child: const Icon(Icons.settings)),
+            icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],
