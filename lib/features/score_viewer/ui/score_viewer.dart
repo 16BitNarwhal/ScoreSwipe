@@ -42,7 +42,7 @@ class _PdfScreen extends State<PdfScreen> {
       ResolutionPreset.low,
       enableAudio: false,
       imageFormatGroup: Platform.isAndroid
-          ? ImageFormatGroup.nv21 // for Android
+          ? ImageFormatGroup.nv21
           : ImageFormatGroup.bgra8888,
     );
 
@@ -70,10 +70,11 @@ class _PdfScreen extends State<PdfScreen> {
         if (face.headEulerAngleZ == null) return;
         final double rot;
 
+        // select axis based on swipe action type
         if (Config.swipeAction == SwipeAction.turn) {
-          rot = face.headEulerAngleY!; // look left/right
+          rot = face.headEulerAngleY!;
         } else {
-          rot = face.headEulerAngleZ!; // tilt
+          rot = face.headEulerAngleZ!;
         }
 
         final double threshold = (100 - Config.sensitivity) / 100 * 40;
@@ -95,7 +96,7 @@ class _PdfScreen extends State<PdfScreen> {
             setState(() {});
           }
         } else if (rot.abs() < threshold * 0.6 && turningPage) {
-          turningPage = false; // or use a timer/delay?
+          turningPage = false;
         }
       });
 

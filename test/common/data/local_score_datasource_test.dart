@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:score_swipe/common/data/local_score_datasource.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-/// Initialize sqflite for test.
 Future<void> sqfliteTestInit() async {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;

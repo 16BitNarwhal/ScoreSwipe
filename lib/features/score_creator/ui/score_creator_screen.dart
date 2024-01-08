@@ -47,7 +47,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
     bool success = await EdgeDetection.detectEdge(
       imagePath,
       canUseGallery: true,
-      androidScanTitle: 'Scanning', // use custom localizations for android
+      androidScanTitle: 'Scanning',
       androidCropTitle: 'Crop',
       androidCropBlackWhiteTitle: 'Black White',
       androidCropReset: 'Reset',
