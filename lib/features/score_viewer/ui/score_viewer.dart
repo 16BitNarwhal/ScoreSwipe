@@ -70,7 +70,7 @@ class _PdfScreen extends State<PdfScreen> {
         if (face.headEulerAngleZ == null) return;
         final double rot;
 
-        if (Config.swipeAction == SwipeAction.turn) {
+        if (Config.swipeAction == SwipeAction.lookLeftRight) {
           rot = face.headEulerAngleY!; // look left/right
         } else {
           rot = face.headEulerAngleZ!; // tilt
