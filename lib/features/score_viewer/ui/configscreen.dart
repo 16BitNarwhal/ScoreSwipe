@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:score_swipe/features/showcase/showcase_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class ConfigScreen extends StatefulWidget {
   const ConfigScreen({Key? key}) : super(key: key);
@@ -10,22 +13,26 @@ class ConfigScreen extends StatefulWidget {
 
 enum SwipeAction {
   none,
-  tiltLeftRight,
-  lookLeftRight,
+  tilt,
+  turn,
 }
 
 class Config {
   static SharedPreferences? prefs;
 
-  static SwipeAction swipeAction = SwipeAction.tiltLeftRight;
+  static SwipeAction swipeAction = SwipeAction.tilt;
   static bool invertDirection = false;
   static double sensitivity = 50;
+
+  static bool finishedShowcase = false;
 
   static Future<void> loadPrefs({Function? callback}) async {
     if (prefs != null) return;
     prefs = await SharedPreferences.getInstance();
-    swipeAction = SwipeAction.values[prefs!.getInt('swipeAction') ?? 0];
+    swipeAction =
+        SwipeAction.values[prefs!.getInt('swipeAction') ?? swipeAction.index];
     sensitivity = prefs!.getDouble('sensitivity') ?? sensitivity;
+    finishedShowcase = prefs!.getBool('finishedShowcase') ?? finishedShowcase;
     callback?.call();
   }
 }
@@ -70,34 +77,39 @@ class _ConfigScreenState extends State<ConfigScreen> {
           children: <Widget>[
             configOption(
               'Swipe Action',
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 3, color: Theme.of(context).colorScheme.primary),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: DropdownButton<SwipeAction>(
-                  value: Config.swipeAction,
-                  onChanged: (SwipeAction? newValue) {
-                    setState(() {
-                      Config.swipeAction = newValue!;
-                      Config.prefs!.setInt('swipeAction', newValue.index);
-                    });
-                  },
-                  items: SwipeAction.values.map<DropdownMenuItem<SwipeAction>>(
-                    (SwipeAction value) {
-                      return DropdownMenuItem<SwipeAction>(
-                        value: value,
-                        child: Text(
-                          value.toString().split('.').last,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      );
+              Showcase(
+                key: context.read<ShowcaseBloc>().keys[7],
+                description: 'Pick a method to turn the page!',
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        width: 3, color: Theme.of(context).colorScheme.primary),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: DropdownButton<SwipeAction>(
+                    value: Config.swipeAction,
+                    onChanged: (SwipeAction? newValue) {
+                      setState(() {
+                        Config.swipeAction = newValue!;
+                        Config.prefs!.setInt('swipeAction', newValue.index);
+                      });
                     },
-                  ).toList(),
-                  icon: Container(),
-                  underline: Container(),
+                    items:
+                        SwipeAction.values.map<DropdownMenuItem<SwipeAction>>(
+                      (SwipeAction value) {
+                        return DropdownMenuItem<SwipeAction>(
+                          value: value,
+                          child: Text(
+                            '${value.toString().split('.').last[0].toUpperCase()}${value.toString().split('.').last.substring(1)}',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        );
+                      },
+                    ).toList(),
+                    icon: Container(),
+                    underline: Container(),
+                  ),
                 ),
               ),
             ),
