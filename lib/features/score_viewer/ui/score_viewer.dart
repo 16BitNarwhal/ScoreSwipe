@@ -7,9 +7,10 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:score_swipe/common/data/local_score_repository.dart';
 import 'package:score_swipe/common/models/score_model.dart';
 import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
+import 'package:score_swipe/features/score_viewer/ui/score_config.dart';
+import 'package:score_swipe/features/configscreen/configscreen.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:logger/logger.dart';
-import 'configscreen.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({Key? key}) : super(key: key);
@@ -177,7 +178,7 @@ class _PdfScreen extends State<PdfScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const ConfigScreen(),
+        builder: (context) => const ScoreConfig(),
       ),
     );
     setState(() {});
