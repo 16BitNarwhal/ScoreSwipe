@@ -58,7 +58,12 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
       androidCropBlackWhiteTitle: 'Black White',
       androidCropReset: 'Reset',
     );
-    if (!success) return;
+    if (!success) {
+      setState(() {
+        isloading = false;
+      });
+      return;
+    }
     setState(() {
       isloading = false;
       images.add(File(imagePath));
@@ -75,7 +80,12 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
       allowMultiple: true,
     );
 
-    if (result == null) return;
+    if (result == null) {
+      setState(() {
+        isloading = false;
+      });
+      return;
+    }
     List<File> pickedImages = result.paths.map((path) => File(path!)).toList();
     setState(() {
       isloading = false;
@@ -94,7 +104,12 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
       allowedExtensions: ['pdf'],
     );
 
-    if (result == null) return;
+    if (result == null) {
+      setState(() {
+        isloading = false;
+      });
+      return;
+    }
 
     File pdfFile = File(result.files.single.path!);
     PdfDocument pdfDocument = await PdfDocument.openFile(pdfFile.path);
