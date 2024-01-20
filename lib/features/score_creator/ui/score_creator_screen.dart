@@ -20,13 +20,14 @@ class ScoreCreatorScreen extends StatefulWidget {
   const ScoreCreatorScreen({super.key});
 
   @override
-  _ScoreCreatorScreenState createState() => _ScoreCreatorScreenState();
+  State<ScoreCreatorScreen> createState() => _ScoreCreatorScreenState();
 }
 
 class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   List<File> images = [];
   int currentPage = 0;
   String scoreName = '';
+  bool isloading = false;
   late Directory dir;
 
   @override
@@ -42,6 +43,9 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   }
 
   Future<void> openCamera() async {
+    setState(() {
+      isloading = true;
+    });
     String uuid = const Uuid().v4();
     String imagePath = '${dir.path}/$uuid.jpeg';
     bool success = await EdgeDetection.detectEdge(
@@ -54,11 +58,15 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
     );
     if (!success) return;
     setState(() {
+      isloading = false;
       images.add(File(imagePath));
     });
   }
 
   Future<void> pickImages() async {
+    setState(() {
+      isloading = true;
+    });
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: true,
@@ -67,11 +75,16 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
     if (result == null) return;
     List<File> pickedImages = result.paths.map((path) => File(path!)).toList();
     setState(() {
+      isloading = false;
       images.addAll(pickedImages);
     });
   }
 
   Future<void> pickPdf() async {
+    setState(() {
+      isloading = true;
+      Logger().wtf('loading');
+    });
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
@@ -96,6 +109,8 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
     }
 
     setState(() {
+      Logger().wtf('finished loading');
+      isloading = false;
       images.addAll(pickedImages);
     });
   }
@@ -114,19 +129,29 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
           children: [
             Expanded(
               child: Container(
-                color: const Color.fromARGB(255, 231, 238, 243),
-                child: PageView.builder(
-                  itemCount: images.length,
-                  controller: PageController(initialPage: currentPage),
-                  onPageChanged: (int page) {
-                    setState(() {
-                      currentPage = page;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return Image.file(images[index]);
-                  },
-                ),
+                child: isloading
+                    ? Center(
+                        child: SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary,
+                            strokeWidth: 16.0,
+                          ),
+                        ),
+                      )
+                    : PageView.builder(
+                        itemCount: images.length,
+                        controller: PageController(initialPage: currentPage),
+                        onPageChanged: (int page) {
+                          setState(() {
+                            currentPage = page;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return Image.file(images[index]);
+                        },
+                      ),
               ),
             ),
             Container(
