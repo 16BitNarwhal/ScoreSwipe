@@ -47,6 +47,11 @@ ScoreSwipe is a unique and innovative application that leverages computer vision
   <img src="https://github.com/16BitNarwhal/ScoreSwipe/assets/31218485/a44cc3fa-d90b-4f7d-a628-d58d414242ff" width="24%">
 </p>
 
+Create & Navigate Score | Edit & Delete Score
+:-: | :-:
+<video src="https://github.com/16BitNarwhal/ScoreSwipe/assets/31218485/33e26ffc-5fcd-46d9-9042-b742e4df46cc"/> | <video src="https://github.com/16BitNarwhal/ScoreSwipe/assets/31218485/cf3e4fee-d5c2-48d2-bac4-7bb78f6aecd0"/>
+
+
 # 💻 For Developers
 
 The application is entirely built using [Flutter](https://flutter.dev/), a cross-platform UI toolkit for building applications for mobile, web, and desktop from a single codebase. Flutter uses the [Dart](https://dart.dev/) programming language.

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'dart:io';
 
@@ -47,6 +48,8 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
               scoreName: event.scoreName);
 
           emit(ScoreBrowserLoaded(scores: state.scores + [score]));
+
+          if (event.finishCallback != null) event.finishCallback!();
 
           Logger().i('Added score ${score.scoreName}');
         } catch (error) {

@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.ericzh1616.scoreswipe"
+        applicationId "com.ericzhang.scoreswipe"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
