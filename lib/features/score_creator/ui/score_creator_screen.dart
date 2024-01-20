@@ -28,6 +28,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   int currentPage = 0;
   String scoreName = '';
   bool isloading = false;
+  bool isCreating = false;
   late Directory dir;
 
   @override
@@ -125,142 +126,172 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: Container(
-                child: isloading
-                    ? Center(
-                        child: SizedBox(
-                          height: 100,
-                          width: 100,
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
-                            strokeWidth: 16.0,
+            Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    child: isloading
+                        ? Center(
+                            child: SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.secondary,
+                                strokeWidth: 16.0,
+                              ),
+                            ),
+                          )
+                        : PageView.builder(
+                            itemCount: images.length,
+                            controller:
+                                PageController(initialPage: currentPage),
+                            onPageChanged: (int page) {
+                              setState(() {
+                                currentPage = page;
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              return Image.file(images[index]);
+                            },
                           ),
-                        ),
-                      )
-                    : PageView.builder(
-                        itemCount: images.length,
-                        controller: PageController(initialPage: currentPage),
-                        onPageChanged: (int page) {
-                          setState(() {
-                            currentPage = page;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          return Image.file(images[index]);
-                        },
-                      ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              child: Column(
-                children: [
-                  PageIndicator(
-                    currentPage: currentPage,
-                    totalPages: images.length,
                   ),
-                  Showcase(
-                    key: context.read<ShowcaseBloc>().keys[3],
-                    description:
-                        'Add pages to your score with any of the following methods',
-                    child: Wrap(
-                      alignment: WrapAlignment.spaceEvenly,
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: [
-                        ActionButton(
-                            onPressed: openCamera, text: 'Add From Camera'),
-                        ActionButton(onPressed: pickImages, text: 'Add Images'),
-                        ActionButton(onPressed: pickPdf, text: 'Import PDF'),
-                        ActionButton(
-                          onPressed: () {
-                            setState(() {
-                              if (images.isEmpty) return;
-                              images.removeAt(currentPage);
-                            });
-                          },
-                          text: 'Delete Current Page',
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onError,
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Showcase(
-                    key: context.read<ShowcaseBloc>().keys[4],
-                    description: 'Give your score a name',
-                    child: Container(
-                      margin: const EdgeInsets.all(16),
-                      child: TextField(
-                        onChanged: (value) {
-                          setState(() {
-                            scoreName = value;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'Score Name',
-                          border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                        ),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: Column(
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/mainscreen', (route) => false);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onError,
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                        child: const Text('Cancel'),
+                      PageIndicator(
+                        currentPage: currentPage,
+                        totalPages: images.length,
                       ),
-                      const SizedBox(width: 16),
                       Showcase(
-                        key: context.read<ShowcaseBloc>().keys[5],
+                        key: context.read<ShowcaseBloc>().keys[3],
                         description:
-                            'Once you\'re finished, submit your score! It will show up in the Score Browser',
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (!isValid()) {
-                              return;
-                            }
-
-                            if (context.mounted) {
-                              BlocProvider.of<ScoreBrowserBloc>(context)
-                                  .add(AddScore(images, scoreName));
+                            'Add pages to your score with any of the following methods',
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceEvenly,
+                          spacing: 16,
+                          runSpacing: 16,
+                          children: [
+                            ActionButton(
+                                onPressed: openCamera, text: 'Add From Camera'),
+                            ActionButton(
+                                onPressed: pickImages, text: 'Add Images'),
+                            ActionButton(
+                                onPressed: pickPdf, text: 'Import PDF'),
+                            ActionButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (images.isEmpty) return;
+                                  images.removeAt(currentPage);
+                                });
+                              },
+                              text: 'Delete Current Page',
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onError,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Showcase(
+                        key: context.read<ShowcaseBloc>().keys[4],
+                        description: 'Give your score a name',
+                        child: Container(
+                          margin: const EdgeInsets.all(16),
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                scoreName = value;
+                              });
+                            },
+                            decoration: const InputDecoration(
+                              hintText: 'Score Name',
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
                               Navigator.pushNamedAndRemoveUntil(
                                   context, '/mainscreen', (route) => false);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: (isValid()
-                                ? Theme.of(context).colorScheme.secondary
-                                : Colors.grey),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onError,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
+                            ),
+                            child: const Text('Cancel'),
                           ),
-                          child: const Text('Submit'),
-                        ),
+                          const SizedBox(width: 16),
+                          Showcase(
+                            key: context.read<ShowcaseBloc>().keys[5],
+                            description:
+                                'Once you\'re finished, submit your score! It will show up in the Score Browser',
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (!isValid()) {
+                                  return;
+                                }
+
+                                if (context.mounted) {
+                                  setState(() {
+                                    isCreating = true;
+                                  });
+                                  BlocProvider.of<ScoreBrowserBloc>(context)
+                                      .add(AddScore(images, scoreName,
+                                          finishCallback: () {
+                                    Navigator.pushNamedAndRemoveUntil(context,
+                                        '/mainscreen', (route) => false);
+                                  }));
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: (isValid()
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Colors.grey),
+                              ),
+                              child: const Text('Submit'),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            isCreating
+                ? Container(
+                    color: const Color.fromARGB(137, 104, 104, 104),
+                    child: Center(
+                      child: SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.secondary,
+                          strokeWidth: 16.0,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
