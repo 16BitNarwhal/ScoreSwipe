@@ -44,6 +44,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   }
 
   Future<void> openCamera() async {
+    if (isCreating || isloading) return;
     setState(() {
       isloading = true;
     });
@@ -65,6 +66,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   }
 
   Future<void> pickImages() async {
+    if (isCreating || isloading) return;
     setState(() {
       isloading = true;
     });
@@ -82,6 +84,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
   }
 
   Future<void> pickPdf() async {
+    if (isCreating || isloading) return;
     setState(() {
       isloading = true;
       Logger().wtf('loading');
@@ -227,6 +230,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
+                              if (isCreating) return;
                               Navigator.pushNamedAndRemoveUntil(
                                   context, '/mainscreen', (route) => false);
                             },
@@ -245,7 +249,7 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
                                 'Once you\'re finished, submit your score! It will show up in the Score Browser',
                             child: ElevatedButton(
                               onPressed: () async {
-                                if (!isValid()) {
+                                if (!isValid() || isCreating) {
                                   return;
                                 }
 
