@@ -122,7 +122,6 @@ class _EditFormState extends State<EditForm> {
                                 child: Text('Delete',
                                     style: TextStyle(color: Colors.red[900]!)),
                                 onPressed: () async {
-                                  Logger().wtf('Deleting score');
                                   BlocProvider.of<ScoreBrowserBloc>(context)
                                       .add(DeleteScore(widget.score));
                                   if (context.mounted) {

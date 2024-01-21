@@ -35,7 +35,6 @@ class LocalScoreRepository {
     await images.first.copy(thumbnail.path);
 
     thumbnail.exists().then((value) => Logger().i(value));
-    Logger().wtf(thumbnail.path);
 
     ScoreModel score = ScoreModel(
       id: const Uuid().v4(),

@@ -97,7 +97,6 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
     if (isCreating || isloading) return;
     setState(() {
       isloading = true;
-      Logger().wtf('loading');
     });
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -128,7 +127,6 @@ class _ScoreCreatorScreenState extends State<ScoreCreatorScreen> {
     }
 
     setState(() {
-      Logger().wtf('finished loading');
       isloading = false;
       images.addAll(pickedImages);
     });
