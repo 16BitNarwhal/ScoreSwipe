@@ -39,6 +39,7 @@ class _PdfScreen extends State<PdfScreen> {
     if (_pdfController.pageNumber == _pdfController.pageCount) {
       showDialog(
         context: context,
+        barrierColor: Colors.transparent,
         builder: (BuildContext context) {
           return const PageAlertDialog(
             message: "You're on the last page",
@@ -54,6 +55,7 @@ class _PdfScreen extends State<PdfScreen> {
     if (_pdfController.pageNumber == 1) {
       showDialog(
         context: context,
+        barrierColor: Colors.transparent,
         builder: (BuildContext context) {
           return const PageAlertDialog(
             message: "You're on the first page",
@@ -234,30 +236,59 @@ class _PdfScreen extends State<PdfScreen> {
   }
 }
 
-class PageAlertDialog extends StatelessWidget {
+class PageAlertDialog extends StatefulWidget {
   final String message;
 
-  const PageAlertDialog({super.key, required this.message});
+  const PageAlertDialog({Key? key, required this.message}) : super(key: key);
+
+  @override
+  _PageAlertDialogState createState() => _PageAlertDialogState();
+}
+
+class _PageAlertDialogState extends State<PageAlertDialog>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500));
+    _fadeAnimation = Tween(begin: 1.0, end: 1.5).animate(_controller)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          Navigator.of(context).pop(); // auto close when fade out complete
+        }
+      });
+    _controller.forward(); // start the fade out
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.transparent,
-      content: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 24.0,
+        title: const Icon(Icons.info_outline, size: 28, color: Colors.blue),
+        content: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            message,
+            widget.message,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
+        backgroundColor: Colors.white.withOpacity(0.9),
       ),
     );
   }
