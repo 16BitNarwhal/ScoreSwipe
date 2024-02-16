@@ -111,15 +111,13 @@ class _PdfScreen extends State<PdfScreen> {
 
         if (rot > threshold) {
           if (!turningPage) {
-            (Config.invertDirection) ? nextPage() : previousPage();
+            (Config.invertDirection) ? previousPage() : nextPage();
             turningPage = true;
             setState(() {});
           }
         } else if (rot < -threshold) {
           if (!turningPage) {
-            (Config.invertDirection)
-                ? _pdfController.nextPage()
-                : _pdfController.previousPage();
+            (Config.invertDirection) ? nextPage() : previousPage();
             turningPage = true;
             setState(() {});
           }
