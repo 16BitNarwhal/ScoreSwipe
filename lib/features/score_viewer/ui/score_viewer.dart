@@ -35,6 +35,36 @@ class _PdfScreen extends State<PdfScreen> {
     Config.loadPrefs();
   }
 
+  void nextPage() {
+    if (_pdfController.pageNumber == _pdfController.pageCount) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const PageAlertDialog(
+            message: "You're on the last page",
+          );
+        },
+      );
+      return;
+    }
+    _pdfController.nextPage();
+  }
+
+  void previousPage() {
+    if (_pdfController.pageNumber == 1) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const PageAlertDialog(
+            message: "You're on the first page",
+          );
+        },
+      );
+      return;
+    }
+    _pdfController.previousPage();
+  }
+
   void startCamera() async {
     cameras = await availableCameras();
     _cameraController = CameraController(
@@ -81,9 +111,7 @@ class _PdfScreen extends State<PdfScreen> {
 
         if (rot > threshold) {
           if (!turningPage) {
-            (Config.invertDirection)
-                ? _pdfController.previousPage()
-                : _pdfController.nextPage();
+            (Config.invertDirection) ? nextPage() : previousPage();
             turningPage = true;
             setState(() {});
           }
@@ -203,6 +231,35 @@ class _PdfScreen extends State<PdfScreen> {
       ),
       body: SafeArea(
         child: SfPdfViewer.file(score.pdfFile, controller: _pdfController),
+      ),
+    );
+  }
+}
+
+class PageAlertDialog extends StatelessWidget {
+  final String message;
+
+  const PageAlertDialog({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      content: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            message,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
     );
   }
