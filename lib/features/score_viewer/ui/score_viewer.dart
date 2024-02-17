@@ -36,6 +36,38 @@ class _PdfScreen extends State<PdfScreen> {
     Config.loadPrefs();
   }
 
+  void nextPage() {
+    if (_pdfController.pageNumber == _pdfController.pageCount) {
+      showDialog(
+        context: context,
+        barrierColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return const PageAlertDialog(
+            message: "You're on the last page",
+          );
+        },
+      );
+      return;
+    }
+    _pdfController.nextPage();
+  }
+
+  void previousPage() {
+    if (_pdfController.pageNumber == 1) {
+      showDialog(
+        context: context,
+        barrierColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return const PageAlertDialog(
+            message: "You're on the first page",
+          );
+        },
+      );
+      return;
+    }
+    _pdfController.previousPage();
+  }
+
   void startCamera() async {
     cameras = await availableCameras();
     _cameraController = CameraController(
@@ -82,17 +114,13 @@ class _PdfScreen extends State<PdfScreen> {
 
         if (rot > threshold) {
           if (!turningPage) {
-            (Config.invertDirection)
-                ? _pdfController.previousPage()
-                : _pdfController.nextPage();
+            (Config.invertDirection) ? previousPage() : nextPage();
             turningPage = true;
             setState(() {});
           }
         } else if (rot < -threshold) {
           if (!turningPage) {
-            (Config.invertDirection)
-                ? _pdfController.nextPage()
-                : _pdfController.previousPage();
+            (Config.invertDirection) ? nextPage() : previousPage();
             turningPage = true;
             setState(() {});
           }
@@ -204,6 +232,64 @@ class _PdfScreen extends State<PdfScreen> {
       ),
       body: SafeArea(
         child: SfPdfViewer.file(score.pdfFile, controller: _pdfController),
+      ),
+    );
+  }
+}
+
+class PageAlertDialog extends StatefulWidget {
+  final String message;
+
+  const PageAlertDialog({Key? key, required this.message}) : super(key: key);
+
+  @override
+  _PageAlertDialogState createState() => _PageAlertDialogState();
+}
+
+class _PageAlertDialogState extends State<PageAlertDialog>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500));
+    _fadeAnimation = Tween(begin: 1.0, end: 1.5).animate(_controller)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          Navigator.of(context).pop(); // auto close when fade out complete
+        }
+      });
+    _controller.forward(); // start the fade out
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 24.0,
+        title: const Icon(Icons.info_outline, size: 28, color: Colors.blue),
+        content: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            widget.message,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        backgroundColor: Colors.white.withOpacity(0.9),
       ),
     );
   }
