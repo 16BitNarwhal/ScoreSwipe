@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.scoreswipe_app"
+    namespace "com.ericzhang.scoreswipe"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
