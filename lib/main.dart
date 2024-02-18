@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'features/score_viewer/ui/score_viewer.dart';
 import 'features/score_browser/ui/score_browser_screen.dart';
-import 'features/score_viewer/ui/configscreen.dart';
+import 'features/configscreen/configscreen.dart';
 import 'features/score_creator/ui/score_creator_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/score_browser/bloc/score_browser_bloc.dart';

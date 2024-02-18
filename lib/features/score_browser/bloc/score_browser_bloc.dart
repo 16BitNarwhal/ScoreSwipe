@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'dart:io';
 
@@ -17,7 +18,6 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
       try {
         List<ScoreModel> scores = await LocalScoreRepository.getAllScores();
         emit(ScoreBrowserLoaded(scores: scores));
-        Logger().i('Finished loading ${scores.length} scores');
       } catch (error) {
         Logger().e('on<LoadScores> : $error');
       }
@@ -33,7 +33,6 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
               .toList();
 
           emit(ScoreBrowserLoaded(scores: scores));
-          Logger().i('Finished searching ${scores.length} scores');
         } catch (error) {
           Logger().e('on<SearchScores> : $error');
         }
@@ -48,7 +47,7 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
 
           emit(ScoreBrowserLoaded(scores: state.scores + [score]));
 
-          Logger().i('Added score ${score.scoreName}');
+          if (event.finishCallback != null) event.finishCallback!();
         } catch (error) {
           Logger().e('on<AddScore> : $error');
         }
@@ -63,8 +62,6 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
               scores: state.scores
                   .where((score) => score.id != event.score.id)
                   .toList()));
-
-          Logger().i('Deleted score $event.id');
         } catch (error) {
           Logger().e('on<DeleteScore> : $error');
         }
@@ -81,8 +78,6 @@ class ScoreBrowserBloc extends Bloc<ScoreBrowserEvent, ScoreBrowserState> {
                   .map((score) =>
                       score.id == event.score.id ? event.score : score)
                   .toList()));
-
-          Logger().i('Toggled favorite for score ${event.score.id}');
         } catch (error) {
           Logger().e('on<ToggleFavorite> : $error');
         }

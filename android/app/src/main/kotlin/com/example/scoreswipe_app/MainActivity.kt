@@ -1,4 +1,4 @@
-package com.example.scoreswipe_app
+package com.ericzhang.scoreswipe
 
 import io.flutter.embedding.android.FlutterActivity
 

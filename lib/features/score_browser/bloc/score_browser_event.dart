@@ -22,8 +22,9 @@ final class SearchScores extends ScoreBrowserEvent {
 final class AddScore extends ScoreBrowserEvent {
   final List<File> images;
   final String scoreName;
+  final VoidCallback? finishCallback;
 
-  const AddScore(this.images, this.scoreName);
+  const AddScore(this.images, this.scoreName, {this.finishCallback});
 
   @override
   List<Object> get props => [images, scoreName];
