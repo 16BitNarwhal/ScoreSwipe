@@ -10,6 +10,7 @@ import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart'
 import 'package:score_swipe/features/score_viewer/ui/score_config.dart';
 import 'package:score_swipe/features/configscreen/configscreen.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:image_painter/image_painter.dart';
 import 'package:logger/logger.dart';
 
 class PdfScreen extends StatefulWidget {
