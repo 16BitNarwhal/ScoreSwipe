@@ -258,9 +258,48 @@ class _DrawingScreenState extends State<DrawingScreen> {
     // For example, use a package like 'flutter_colorpicker' to let the user pick a color
   }
 
-  void _selectStrokeWidth() {
-    // Implement stroke width selection logic
-    // For example, show a dialog and let the user select a stroke width
+  void _selectStrokeWidth() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        double selectedStrokeWidth = strokeWidth;
+        return AlertDialog(
+          title: const Text('Select Stroke Width'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              return Slider(
+                value: selectedStrokeWidth,
+                min: 1,
+                max: 10,
+                divisions: 9,
+                onChanged: (double value) {
+                  setState(() {
+                    selectedStrokeWidth = value;
+                  });
+                },
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                setState(() {
+                  strokeWidth = selectedStrokeWidth;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
