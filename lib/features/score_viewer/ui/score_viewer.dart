@@ -20,13 +20,15 @@ class PdfScreen extends StatefulWidget {
 }
 
 class _PdfScreen extends State<PdfScreen> {
-  late List<CameraDescription> cameras;
+  late List<CameraDescription> _cameras;
   late CameraController _cameraController;
   late PdfViewerController _pdfController;
 
-  bool turningPage = false;
+  bool _turningPage = false;
+  double previousEulerAngle = 0;
+  DateTime previousTime = DateTime.now();
 
-  final faceDetector = FaceDetector(options: FaceDetectorOptions());
+  final _faceDetector = FaceDetector(options: FaceDetectorOptions());
 
   @override
   void initState() {
@@ -69,9 +71,9 @@ class _PdfScreen extends State<PdfScreen> {
   }
 
   void startCamera() async {
-    cameras = await availableCameras();
+    _cameras = await availableCameras();
     _cameraController = CameraController(
-      cameras[1],
+      _cameras[1],
       ResolutionPreset.low,
       enableAudio: false,
       imageFormatGroup: Platform.isAndroid
@@ -90,7 +92,7 @@ class _PdfScreen extends State<PdfScreen> {
         InputImage? inputImage = inputImageFromCameraImage(availableImage);
         if (inputImage == null) return;
 
-        final List<Face> faces = await faceDetector.processImage(inputImage);
+        final List<Face> faces = await _faceDetector.processImage(inputImage);
         if (faces.isEmpty) return;
 
         // set face to face with largest bounding box area
@@ -112,21 +114,27 @@ class _PdfScreen extends State<PdfScreen> {
 
         final double threshold = (100 - Config.sensitivity) / 100 * 40;
 
+        double angularSpeed = (rot - previousEulerAngle) /
+            DateTime.now().difference(previousTime).inMilliseconds;
+        angularSpeed = angularSpeed.abs();
+        Logger().i('rot: $rot, angularSpeed: $angularSpeed');
         if (rot > threshold) {
-          if (!turningPage) {
+          if (!_turningPage && angularSpeed > 0.01) {
             (Config.invertDirection) ? previousPage() : nextPage();
-            turningPage = true;
+            _turningPage = true;
             setState(() {});
           }
         } else if (rot < -threshold) {
-          if (!turningPage) {
+          if (!_turningPage && angularSpeed > 0.01) {
             (Config.invertDirection) ? nextPage() : previousPage();
-            turningPage = true;
+            _turningPage = true;
             setState(() {});
           }
-        } else if (rot.abs() < threshold * 0.6 && turningPage) {
-          turningPage = false;
+        } else if (rot.abs() < threshold * 0.6 && _turningPage) {
+          _turningPage = false;
         }
+        previousEulerAngle = rot;
+        previousTime = DateTime.now();
       });
 
       setState(() {});
@@ -147,7 +155,7 @@ class _PdfScreen extends State<PdfScreen> {
     // it is used in android to convert the InputImage from Dart to Java
     // `rotation` is not used in iOS to convert the InputImage from Dart to Obj-C
     // in both platforms `rotation` and `camera.lensDirection` can be used to compensate `x` and `y` coordinates on a canvas
-    final camera = cameras[1];
+    final camera = _cameras[1];
     final sensorOrientation = camera.sensorOrientation;
     InputImageRotation? rotation;
     if (Platform.isIOS) {
