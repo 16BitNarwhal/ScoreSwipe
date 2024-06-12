@@ -21,6 +21,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin camera_android, io.flutter.plugins.camera.CameraPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin device_info_plus, dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new com.sample.edgedetection.EdgeDetectionPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin edge_detection, com.sample.edgedetection.EdgeDetectionPlugin", e);
@@ -56,9 +61,9 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin pdf_render, jp.espresso3389.pdf_render.PdfRenderPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new jp.espresso3389.pdfrx.PdfrxPlugin());
+      flutterEngine.getPlugins().add(new io.scer.pdfx.PdfxPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin pdfrx, jp.espresso3389.pdfrx.PdfrxPlugin", e);
+      Log.e(TAG, "Error registering plugin pdfx, io.scer.pdfx.PdfxPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.baseflow.permissionhandler.PermissionHandlerPlugin());

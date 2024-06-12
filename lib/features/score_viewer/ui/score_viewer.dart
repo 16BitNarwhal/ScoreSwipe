@@ -9,7 +9,7 @@ import 'package:score_swipe/common/models/score_model.dart';
 import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
 import 'package:score_swipe/features/score_viewer/ui/score_config.dart';
 import 'package:score_swipe/features/configscreen/configscreen.dart';
-import 'package:pdfrx/pdfrx.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:logger/logger.dart';
 
 class PdfScreen extends StatefulWidget {
@@ -22,8 +22,7 @@ class PdfScreen extends StatefulWidget {
 class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> _cameras;
   late CameraController _cameraController;
-  late PdfViewerController _pdfController;
-  late Uint8List _scoreData;
+  PdfController? _pdfController;
 
   bool _turningPage = false;
   double previousEulerAngle = 0;
@@ -34,13 +33,13 @@ class _PdfScreen extends State<PdfScreen> {
   @override
   void initState() {
     super.initState();
-    _pdfController = PdfViewerController();
     startCamera();
     Config.loadPrefs();
   }
 
   void nextPage() {
-    if (_pdfController.pageNumber == _pdfController.pageCount) {
+    if (_pdfController == null) return;
+    if (_pdfController!.page == _pdfController!.pagesCount) {
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
@@ -52,12 +51,13 @@ class _PdfScreen extends State<PdfScreen> {
       );
       return;
     }
-    if (_pdfController.pageNumber == null) return;
-    _pdfController.goToPage(pageNumber: _pdfController.pageNumber! + 1);
+    _pdfController!.nextPage(
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void previousPage() {
-    if (_pdfController.pageNumber == 1) {
+    if (_pdfController == null) return;
+    if (_pdfController!.page == 1) {
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
@@ -69,8 +69,8 @@ class _PdfScreen extends State<PdfScreen> {
       );
       return;
     }
-    if (_pdfController.pageNumber == null) return;
-    _pdfController.goToPage(pageNumber: _pdfController.pageNumber! - 1);
+    _pdfController!.previousPage(
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void startCamera() async {
@@ -208,7 +208,7 @@ class _PdfScreen extends State<PdfScreen> {
   void dispose() {
     _cameraController.stopImageStream();
     _cameraController.dispose();
-    _pdfController.dispose();
+    _pdfController?.dispose();
     super.dispose();
   }
 
@@ -227,7 +227,12 @@ class _PdfScreen extends State<PdfScreen> {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     ScoreModel score = arguments['score'];
     score.lastOpened = DateTime.now();
-    _scoreData = score.pdfFile.readAsBytesSync();
+    _pdfController = PdfController(
+        document: PdfDocument.openData(score.pdfFile.readAsBytesSync()));
+
+    setState(() {});
+
+    Logger().wtf("pdfController: $_pdfController");
     LocalScoreRepository.updateScore(score);
     BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(score));
 
@@ -242,10 +247,11 @@ class _PdfScreen extends State<PdfScreen> {
         ],
       ),
       body: SafeArea(
-        child: PdfViewer.data(
-          _scoreData,
-          controller: _pdfController,
-        ),
+        child: _pdfController == null
+            ? const Center(child: CircularProgressIndicator())
+            : PdfView(
+                controller: _pdfController!,
+              ),
       ),
     );
   }
