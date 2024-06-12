@@ -23,6 +23,7 @@ class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> _cameras;
   late CameraController _cameraController;
   late PdfViewerController _pdfController;
+  late Uint8List _scoreData;
 
   bool _turningPage = false;
   double previousEulerAngle = 0;
@@ -119,7 +120,6 @@ class _PdfScreen extends State<PdfScreen> {
         double angularSpeed = (rot - previousEulerAngle) /
             DateTime.now().difference(previousTime).inMilliseconds;
         angularSpeed = angularSpeed.abs();
-        Logger().i('rot: $rot, angularSpeed: $angularSpeed');
         if (rot > threshold) {
           if (!_turningPage && angularSpeed > 0.01) {
             (Config.invertDirection) ? previousPage() : nextPage();
@@ -227,6 +227,7 @@ class _PdfScreen extends State<PdfScreen> {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     ScoreModel score = arguments['score'];
     score.lastOpened = DateTime.now();
+    _scoreData = score.pdfFile.readAsBytesSync();
     LocalScoreRepository.updateScore(score);
     BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(score));
 
@@ -241,8 +242,8 @@ class _PdfScreen extends State<PdfScreen> {
         ],
       ),
       body: SafeArea(
-        child: PdfViewer.asset(
-          score.pdfFile.path,
+        child: PdfViewer.data(
+          _scoreData,
           controller: _pdfController,
         ),
       ),
@@ -256,7 +257,7 @@ class PageAlertDialog extends StatefulWidget {
   const PageAlertDialog({Key? key, required this.message}) : super(key: key);
 
   @override
-  _PageAlertDialogState createState() => _PageAlertDialogState();
+  State<PageAlertDialog> createState() => _PageAlertDialogState();
 }
 
 class _PageAlertDialogState extends State<PageAlertDialog>
