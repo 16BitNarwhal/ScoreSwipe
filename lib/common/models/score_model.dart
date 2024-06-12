@@ -1,12 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
-import 'package:uuid/uuid.dart';
-import 'package:pdf_render/pdf_render.dart';
-import 'package:image/image.dart' as imglib;
-import 'dart:convert';
-
-import 'package:logger/logger.dart';
 
 class ScoreModel {
   final String id;
