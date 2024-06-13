@@ -22,7 +22,7 @@ class PdfScreen extends StatefulWidget {
 class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> _cameras;
   late CameraController _cameraController;
-  PdfController? _pdfController;
+  late PdfController _pdfController;
 
   bool _turningPage = false;
   double previousEulerAngle = 0;
@@ -30,16 +30,20 @@ class _PdfScreen extends State<PdfScreen> {
 
   final _faceDetector = FaceDetector(options: FaceDetectorOptions());
 
+// TODO: https://stackoverflow.com/questions/56262655/flutter-get-passed-arguments-from-navigator-in-widgets-states-initstate
   @override
   void initState() {
     super.initState();
     startCamera();
+    _pdfController = PdfController(
+        document: PdfDocument.openData(
+            File('/data/user/0/com.ericzhang.scoreswipe/app_flutter/imagin.pdf')
+                .readAsBytesSync()));
     Config.loadPrefs();
   }
 
   void nextPage() {
-    if (_pdfController == null) return;
-    if (_pdfController!.page == _pdfController!.pagesCount) {
+    if (_pdfController.page == _pdfController.pagesCount) {
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
@@ -51,13 +55,12 @@ class _PdfScreen extends State<PdfScreen> {
       );
       return;
     }
-    _pdfController!.nextPage(
+    _pdfController.nextPage(
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void previousPage() {
-    if (_pdfController == null) return;
-    if (_pdfController!.page == 1) {
+    if (_pdfController.page == 1) {
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
@@ -69,7 +72,7 @@ class _PdfScreen extends State<PdfScreen> {
       );
       return;
     }
-    _pdfController!.previousPage(
+    _pdfController.previousPage(
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
@@ -208,7 +211,7 @@ class _PdfScreen extends State<PdfScreen> {
   void dispose() {
     _cameraController.stopImageStream();
     _cameraController.dispose();
-    _pdfController?.dispose();
+    _pdfController.dispose();
     super.dispose();
   }
 
@@ -227,12 +230,11 @@ class _PdfScreen extends State<PdfScreen> {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     ScoreModel score = arguments['score'];
     score.lastOpened = DateTime.now();
-    _pdfController = PdfController(
-        document: PdfDocument.openData(score.pdfFile.readAsBytesSync()));
+    // TODO: pdfx page controller
+    Logger().wtf(score.pdfFile.path);
+    // _pdfController = PdfController(
+    //     document: PdfDocument.openData(score.pdfFile.readAsBytesSync()));
 
-    setState(() {});
-
-    Logger().wtf("pdfController: $_pdfController");
     LocalScoreRepository.updateScore(score);
     BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(score));
 
@@ -250,7 +252,18 @@ class _PdfScreen extends State<PdfScreen> {
         child: _pdfController == null
             ? const Center(child: CircularProgressIndicator())
             : PdfView(
-                controller: _pdfController!,
+                builders: PdfViewBuilders<DefaultBuilderOptions>(
+                  options: const DefaultBuilderOptions(),
+                  // make document loader red
+                  documentLoaderBuilder: (_) => const Center(
+                    child: CircularProgressIndicator(color: Colors.red),
+                  ),
+                  pageLoaderBuilder: (_) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorBuilder: (_, error) =>
+                      Center(child: Text(error.toString())),
+                ),
+                controller: _pdfController,
               ),
       ),
     );
