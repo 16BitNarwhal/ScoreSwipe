@@ -35,11 +35,18 @@ class _PdfScreen extends State<PdfScreen> {
   void initState() {
     super.initState();
     startCamera();
+    Config.loadPrefs();
+  }
+
+  @override
+  void didChangeDependencies() {
+    ScoreModel score = (ModalRoute.of(context)!.settings.arguments
+        as Map<String, dynamic>)["score"];
     _pdfController = PdfController(
         document: PdfDocument.openData(
-            File('/data/user/0/com.ericzhang.scoreswipe/app_flutter/imagin.pdf')
-                .readAsBytesSync()));
-    Config.loadPrefs();
+      score.pdfFile.readAsBytesSync(),
+    ));
+    super.didChangeDependencies();
   }
 
   void nextPage() {
@@ -230,10 +237,6 @@ class _PdfScreen extends State<PdfScreen> {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     ScoreModel score = arguments['score'];
     score.lastOpened = DateTime.now();
-    // TODO: pdfx page controller
-    Logger().wtf(score.pdfFile.path);
-    // _pdfController = PdfController(
-    //     document: PdfDocument.openData(score.pdfFile.readAsBytesSync()));
 
     LocalScoreRepository.updateScore(score);
     BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(score));
