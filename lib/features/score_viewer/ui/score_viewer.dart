@@ -252,22 +252,19 @@ class _PdfScreen extends State<PdfScreen> {
         ],
       ),
       body: SafeArea(
-        child: _pdfController == null
-            ? const Center(child: CircularProgressIndicator())
-            : PdfView(
-                builders: PdfViewBuilders<DefaultBuilderOptions>(
-                  options: const DefaultBuilderOptions(),
-                  // make document loader red
-                  documentLoaderBuilder: (_) => const Center(
-                    child: CircularProgressIndicator(color: Colors.red),
-                  ),
-                  pageLoaderBuilder: (_) =>
-                      const Center(child: CircularProgressIndicator()),
-                  errorBuilder: (_, error) =>
-                      Center(child: Text(error.toString())),
-                ),
-                controller: _pdfController,
-              ),
+        child: PdfView(
+          builders: PdfViewBuilders<DefaultBuilderOptions>(
+            options: const DefaultBuilderOptions(),
+            // make document loader red
+            documentLoaderBuilder: (_) => const Center(
+              child: CircularProgressIndicator(color: Colors.red),
+            ),
+            pageLoaderBuilder: (_) =>
+                const Center(child: CircularProgressIndicator()),
+            errorBuilder: (_, error) => Center(child: Text(error.toString())),
+          ),
+          controller: _pdfController,
+        ),
       ),
     );
   }
