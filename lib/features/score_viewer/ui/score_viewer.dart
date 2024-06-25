@@ -130,6 +130,7 @@ class _PdfScreen extends State<PdfScreen> {
         double angularSpeed = (rot - previousEulerAngle) /
             DateTime.now().difference(previousTime).inMilliseconds;
         angularSpeed = angularSpeed.abs();
+
         if (rot > threshold) {
           if (!_turningPage && angularSpeed > 0.01) {
             (Config.invertDirection) ? previousPage() : nextPage();
