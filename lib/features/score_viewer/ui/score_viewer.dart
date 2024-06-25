@@ -7,9 +7,10 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:score_swipe/common/data/local_score_repository.dart';
 import 'package:score_swipe/common/models/score_model.dart';
 import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
+import 'package:score_swipe/features/score_viewer/ui/page_alert_dialog.dart';
 import 'package:score_swipe/features/score_viewer/ui/score_config.dart';
 import 'package:score_swipe/features/configscreen/configscreen.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:logger/logger.dart';
 
 class PdfScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class PdfScreen extends StatefulWidget {
 class _PdfScreen extends State<PdfScreen> {
   late List<CameraDescription> _cameras;
   late CameraController _cameraController;
-  late PdfViewerController _pdfController;
+  late PdfController _pdfController;
 
   bool _turningPage = false;
   double previousEulerAngle = 0;
@@ -33,13 +34,23 @@ class _PdfScreen extends State<PdfScreen> {
   @override
   void initState() {
     super.initState();
-    _pdfController = PdfViewerController();
     startCamera();
     Config.loadPrefs();
   }
 
+  @override
+  void didChangeDependencies() {
+    ScoreModel score = (ModalRoute.of(context)!.settings.arguments
+        as Map<String, dynamic>)["score"];
+    _pdfController = PdfController(
+        document: PdfDocument.openData(
+      score.pdfFile.readAsBytesSync(),
+    ));
+    super.didChangeDependencies();
+  }
+
   void nextPage() {
-    if (_pdfController.pageNumber == _pdfController.pageCount) {
+    if (_pdfController.page == _pdfController.pagesCount) {
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
@@ -51,11 +62,12 @@ class _PdfScreen extends State<PdfScreen> {
       );
       return;
     }
-    _pdfController.nextPage();
+    _pdfController.nextPage(
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void previousPage() {
-    if (_pdfController.pageNumber == 1) {
+    if (_pdfController.page == 1) {
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
@@ -67,7 +79,8 @@ class _PdfScreen extends State<PdfScreen> {
       );
       return;
     }
-    _pdfController.previousPage();
+    _pdfController.previousPage(
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void startCamera() async {
@@ -117,7 +130,7 @@ class _PdfScreen extends State<PdfScreen> {
         double angularSpeed = (rot - previousEulerAngle) /
             DateTime.now().difference(previousTime).inMilliseconds;
         angularSpeed = angularSpeed.abs();
-        Logger().i('rot: $rot, angularSpeed: $angularSpeed');
+
         if (rot > threshold) {
           if (!_turningPage && angularSpeed > 0.01) {
             (Config.invertDirection) ? previousPage() : nextPage();
@@ -225,6 +238,7 @@ class _PdfScreen extends State<PdfScreen> {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     ScoreModel score = arguments['score'];
     score.lastOpened = DateTime.now();
+
     LocalScoreRepository.updateScore(score);
     BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(score));
 
@@ -239,65 +253,19 @@ class _PdfScreen extends State<PdfScreen> {
         ],
       ),
       body: SafeArea(
-        child: SfPdfViewer.file(score.pdfFile, controller: _pdfController),
-      ),
-    );
-  }
-}
-
-class PageAlertDialog extends StatefulWidget {
-  final String message;
-
-  const PageAlertDialog({Key? key, required this.message}) : super(key: key);
-
-  @override
-  _PageAlertDialogState createState() => _PageAlertDialogState();
-}
-
-class _PageAlertDialogState extends State<PageAlertDialog>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1500));
-    _fadeAnimation = Tween(begin: 1.0, end: 1.5).animate(_controller)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          Navigator.of(context).pop(); // auto close when fade out complete
-        }
-      });
-    _controller.forward(); // start the fade out
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        elevation: 24.0,
-        title: const Icon(Icons.info_outline, size: 28, color: Colors.blue),
-        content: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            widget.message,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+        child: PdfView(
+          builders: PdfViewBuilders<DefaultBuilderOptions>(
+            options: const DefaultBuilderOptions(),
+            // make document loader red
+            documentLoaderBuilder: (_) => const Center(
+              child: CircularProgressIndicator(color: Colors.red),
             ),
+            pageLoaderBuilder: (_) =>
+                const Center(child: CircularProgressIndicator()),
+            errorBuilder: (_, error) => Center(child: Text(error.toString())),
           ),
+          controller: _pdfController,
         ),
-        backgroundColor: Colors.white.withOpacity(0.9),
       ),
     );
   }

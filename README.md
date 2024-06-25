@@ -2,8 +2,8 @@
 
 # ScoreSwipe
 
-<!-- ![GitHub](https://img.shields.io/github/license/16bitnarwhal/scoreswipe) -->
-
+![Tests](https://img.shields.io/circleci/project/github/badges/shields/master)
+![Code Size](https://img.shields.io/github/languages/code-size/16bitnarwhal/scoreswipe)
 ![GitHub issues](https://img.shields.io/github/issues/16bitnarwhal/scoreswipe)
 ![GitHub contributors](https://img.shields.io/github/contributors/16bitnarwhal/scoreswipe)
 ![GitHub last commit](https://img.shields.io/github/last-commit/16bitnarwhal/scoreswipe)
