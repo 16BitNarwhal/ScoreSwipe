@@ -7,6 +7,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:score_swipe/common/data/local_score_repository.dart';
 import 'package:score_swipe/common/models/score_model.dart';
 import 'package:score_swipe/features/score_browser/bloc/score_browser_bloc.dart';
+import 'package:score_swipe/features/score_viewer/ui/page_alert_dialog.dart';
 import 'package:score_swipe/features/score_viewer/ui/score_config.dart';
 import 'package:score_swipe/features/configscreen/configscreen.dart';
 import 'package:pdfx/pdfx.dart';
@@ -30,12 +31,22 @@ class _PdfScreen extends State<PdfScreen> {
 
   final _faceDetector = FaceDetector(options: FaceDetectorOptions());
 
-// TODO: https://stackoverflow.com/questions/56262655/flutter-get-passed-arguments-from-navigator-in-widgets-states-initstate
   @override
   void initState() {
     super.initState();
     startCamera();
     Config.loadPrefs();
+  }
+
+  @override
+  void didChangeDependencies() {
+    ScoreModel score = (ModalRoute.of(context)!.settings.arguments
+        as Map<String, dynamic>)["score"];
+    _pdfController = PdfController(
+        document: PdfDocument.openData(
+      score.pdfFile.readAsBytesSync(),
+    ));
+    super.didChangeDependencies();
   }
 
   @override
@@ -63,6 +74,7 @@ class _PdfScreen extends State<PdfScreen> {
       return;
     }
     _pdfController.nextPage(
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
@@ -80,6 +92,7 @@ class _PdfScreen extends State<PdfScreen> {
       return;
     }
     _pdfController.previousPage(
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
@@ -105,7 +118,7 @@ class _PdfScreen extends State<PdfScreen> {
         InputImage? inputImage = inputImageFromCameraImage(availableImage);
         if (inputImage == null) return;
 
-        final List<Face> faces = await _faceDetector.processImage(inputImage);
+        final List<Face> faces = await __faceDetector.processImage(inputImage);
         if (faces.isEmpty) return;
 
         // set face to face with largest bounding box area
@@ -130,21 +143,31 @@ class _PdfScreen extends State<PdfScreen> {
         double angularSpeed = (rot - previousEulerAngle) /
             DateTime.now().difference(previousTime).inMilliseconds;
         angularSpeed = angularSpeed.abs();
+
+        double angularSpeed = (rot - previousEulerAngle) /
+            DateTime.now().difference(previousTime).inMilliseconds;
+        angularSpeed = angularSpeed.abs();
+
+        double angularSpeed = (rot - previousEulerAngle) /
+            DateTime.now().difference(previousTime).inMilliseconds;
+        angularSpeed = angularSpeed.abs();
         if (rot > threshold) {
-          if (!_turningPage && angularSpeed > 0.01) {
+          if (!__turningPage && angularSpeed > 0.01 && angularSpeed > 0.01) {
             (Config.invertDirection) ? previousPage() : nextPage();
-            _turningPage = true;
+            __turningPage = true;
             setState(() {});
           }
         } else if (rot < -threshold) {
-          if (!_turningPage && angularSpeed > 0.01) {
+          if (!__turningPage && angularSpeed > 0.01 && angularSpeed > 0.01) {
             (Config.invertDirection) ? nextPage() : previousPage();
-            _turningPage = true;
+            __turningPage = true;
             setState(() {});
           }
-        } else if (rot.abs() < threshold * 0.6 && _turningPage) {
-          _turningPage = false;
+        } else if (rot.abs() < threshold * 0.6 && __turningPage) {
+          __turningPage = false;
         }
+        previousEulerAngle = rot;
+        previousTime = DateTime.now();
         previousEulerAngle = rot;
         previousTime = DateTime.now();
       });
@@ -167,7 +190,7 @@ class _PdfScreen extends State<PdfScreen> {
     // it is used in android to convert the InputImage from Dart to Java
     // `rotation` is not used in iOS to convert the InputImage from Dart to Obj-C
     // in both platforms `rotation` and `camera.lensDirection` can be used to compensate `x` and `y` coordinates on a canvas
-    final camera = _cameras[1];
+    final camera = __cameras[1];
     final sensorOrientation = camera.sensorOrientation;
     InputImageRotation? rotation;
     if (Platform.isIOS) {
@@ -237,6 +260,7 @@ class _PdfScreen extends State<PdfScreen> {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     ScoreModel score = arguments['score'];
     score.lastOpened = DateTime.now();
+
 
     LocalScoreRepository.updateScore(score);
     BlocProvider.of<ScoreBrowserBloc>(context).add(EditScore(score));
@@ -326,6 +350,19 @@ class _PageAlertDialogState extends State<PageAlertDialog>
           ),
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
+        child: PdfView(
+          builders: PdfViewBuilders<DefaultBuilderOptions>(
+            options: const DefaultBuilderOptions(),
+            // make document loader red
+            documentLoaderBuilder: (_) => const Center(
+              child: CircularProgressIndicator(color: Colors.red),
+            ),
+            pageLoaderBuilder: (_) =>
+                const Center(child: CircularProgressIndicator()),
+            errorBuilder: (_, error) => Center(child: Text(error.toString())),
+          ),
+          controller: _pdfController,
+        ),
       ),
     );
   }
